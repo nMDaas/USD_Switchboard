@@ -15,19 +15,19 @@ def Xform "root" (
     }
 
     variantSet "transformVariant" = {
-        "red" {
+        "small" {
             def Sphere "sphere"
             {
-                double radius = 100
+                double radius = 1
                 bool refinementEnableOverride = 1
                 int refinementLevel = 2
                 rel material:binding = </World/Looks/OmniPBR>
             }
         }
-        "green" {
+        "big" {
             def Sphere "sphere"
             {
-                double radius = 50
+                double radius = 1.5
                 bool refinementEnableOverride = 1
                 int refinementLevel = 2
                 rel material:binding = </World/Looks/OmniPBR>
