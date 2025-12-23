@@ -1,0 +1,37 @@
+#usda 1.0
+(
+    defaultPrim = "root"
+)
+
+def Xform "root" (
+    prepend variantSets = "transformVariant"
+)
+{
+    def Sphere "sphere"
+    {
+        bool refinementEnableOverride = 1
+        int refinementLevel = 2
+        rel material:binding = </World/Looks/OmniPBR>
+    }
+
+    variantSet "transformVariant" = {
+        "red" {
+            def Sphere "sphere"
+            {
+                double radius = 100
+                bool refinementEnableOverride = 1
+                int refinementLevel = 2
+                rel material:binding = </World/Looks/OmniPBR>
+            }
+        }
+        "green" {
+            def Sphere "sphere"
+            {
+                double radius = 50
+                bool refinementEnableOverride = 1
+                int refinementLevel = 2
+                rel material:binding = </World/Looks/OmniPBR>
+            }
+        }
+    }
+}
