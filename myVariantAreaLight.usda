@@ -1,0 +1,61 @@
+#usda 1.0
+(
+    defaultPrim = "myAreaLight"
+    metersPerUnit = 0.01
+    upAxis = "Y"
+)
+
+def Xform "myAreaLight" (
+    prepend variantSets = "colorVariant"
+)
+{
+    def RectLight "myAreaLight" (
+        prepend apiSchemas = ["ShadowAPI"]
+    )
+    {
+        float inputs:intensity = 30
+        bool inputs:normalize = 1
+        color3f inputs:shadow:color
+        bool inputs:shadow:enable
+        float3 xformOp:rotateXYZ = (-45.7752, 114.50576, 0)
+        float3 xformOp:scale = (1.5905908, 1, 1)
+        double3 xformOp:translate = (2.9207670169151587, 4.744333367897719, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    variantSet "colorVariant" = {
+        "pink" {
+            def RectLight "myAreaLight" (
+                prepend apiSchemas = ["ShadowAPI"]
+            )
+            {
+                color3f inputs:color = (0.9046, 0.7507, 0.9338)
+                float inputs:intensity = 30
+                bool inputs:normalize = 1
+                color3f inputs:shadow:color
+                bool inputs:shadow:enable
+                float3 xformOp:rotateXYZ = (-45.7752, 114.50576, 0)
+                float3 xformOp:scale = (1.5905908, 1, 1)
+                double3 xformOp:translate = (2.9207670169151587, 4.744333367897719, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            }
+        }
+        "otherColor" {
+            def RectLight "myAreaLight" (
+                prepend apiSchemas = ["ShadowAPI"]
+            )
+            {
+                color3f inputs:color = (0.2046, 0.7507, 0.9338)
+                float inputs:intensity = 30
+                bool inputs:normalize = 1
+                color3f inputs:shadow:color
+                bool inputs:shadow:enable
+                float3 xformOp:rotateXYZ = (-45.7752, 114.50576, 0)
+                float3 xformOp:scale = (1.5905908, 1, 1)
+                double3 xformOp:translate = (2.9207670169151587, 4.744333367897719, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            }
+        }
+    }
+}
+
