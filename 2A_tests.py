@@ -9,5 +9,9 @@ cmds.vnnCompound(f"{graph_shape}","/", addNode="BifrostGraph,USD::Stage,create_u
 # Add an add_to_stage node
 cmds.vnnCompound(f"{graph_shape}","/", addNode="BifrostGraph,USD::Stage,add_to_stage")
 
-#Connect create_usd_stage to add_to_stage node
+# Connect add_to_stage node to output node
+cmds.vnnNode(f"{graph_shape}", "/output", createInputPort=("out_stage", "BifrostUsd::Stage"))
+cmds.vnnConnect(f"{graph_shape}", "/add_to_stage.out_stage", "/output.out_stage")
+
+# Connect create_usd_stage to add_to_stage node
 cmds.vnnConnect(f"{graph_shape}", "/create_usd_stage.stage", "/add_to_stage.stage")
