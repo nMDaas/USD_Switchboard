@@ -15,3 +15,9 @@ cmds.vnnConnect(f"{graph_shape}", "/add_to_stage.out_stage", "/output.out_stage"
 
 # Connect create_usd_stage to add_to_stage node
 cmds.vnnConnect(f"{graph_shape}", "/create_usd_stage.stage", "/add_to_stage.stage")
+
+# Add a define_usd_prim / Xform node
+cmds.vnnCompound(f"{graph_shape}","/", addNode="BifrostGraph,USD::Prim,define_usd_prim")
+# Connect it to add_to_stage prim_definitions port
+cmds.vnnNode(f"{graph_shape}", "/add_to_stage", createInputPort=("prim_definitions.prim_definition", "Object"))
+cmds.vnnConnect(f"{graph_shape}", "/define_usd_prim.prim_definition", "/add_to_stage.prim_definitions.prim_definition")
