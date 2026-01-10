@@ -27,3 +27,9 @@ cmds.vnnCompound(f"{graph_shape}","/", addNode="BifrostGraph,USD::VariantSet,def
 # Connect it to define_usd_prim variant_set_definitions port
 cmds.vnnNode(f"{graph_shape}", "/define_usd_prim", createInputPort=("variant_set_definitions.variant_set_definition", "Object"))
 cmds.vnnConnect(f"{graph_shape}", "/define_usd_variant_set.variant_set_definition", "/define_usd_prim.variant_set_definitions.variant_set_definition")
+
+# Add a define_usd_mesh node
+cmds.vnnCompound(f"{graph_shape}","/", addNode="BifrostGraph,USD::Prim,define_usd_mesh")
+# Connect it to define_usd_prim children port
+cmds.vnnNode(f"{graph_shape}", "/define_usd_prim", createInputPort=("children.mesh_definition", "Object"))
+cmds.vnnConnect(f"{graph_shape}", "/define_usd_mesh.mesh_definition", "/define_usd_prim.children.mesh_definition")
