@@ -36,19 +36,16 @@ def createVariantSet(Xf_selected, in_vset_name):
 
 # Currently kind of a "dummy" implementation - num is to create spheres of different radii
 #TODO: There should be error checking for if the variant_name already exists for the vset
-def createVariantForSet(stage, Xf_path, vset, variant_name, num):
+def createVariantForSet(Xf_prim, vset, variant_name, file_path):
     vset.AddVariant(variant_name)
 
     vset.SetVariantSelection(variant_name)
 
-    # Dummy for demonstration purposes
+    # Go inside the variant and add the file reference
     with vset.GetVariantEditContext():
-        sphere = UsdGeom.Sphere.Define(stage, f"{Xf_path}/geometry")
-        sphere.GetRadiusAttr().Set(num)
-
-# TODO: This is assumed, which it should not be (?)
-proxy_shape_path = "|stage1|stageShape1"
-stage = mayaUsd.ufe.getStage(proxy_shape_path)
+        Xf_prim.GetReferences().AddReference(file_path)
+    
+    print(f"Variant '{variant_name}' authored with reference to: {file_path}")
 
 # Get Xform selected
 Xf_selected = get_selected_usd_prim()
@@ -59,6 +56,6 @@ Xf_path = Xf_selected.GetPath() # this is the path that is preceded by '/', so n
 vset = createVariantSet(Xf_selected, "MyVariantSet")
 
 # TODO: variant names should come from the user
-# TODO: variant content should also come from the user
-createVariantForSet(stage, Xf_path, vset, "vs_1", 3.0)
-createVariantForSet(stage, Xf_path, vset, "vs_2", 1.0)
+# TODO: variant content should also come from the user (for now, file)
+createVariantForSet(Xf_selected, vset, "vs_1", "/Users/natashadaas/Documents/USD_Switchboard_Playground/data/Kitchen_set/assets/Stove/Stove.usd")
+createVariantForSet(Xf_selected, vset, "vs_2", "/Users/natashadaas/Documents/USD_Switchboard_Playground/data/Kitchen_set/assets/KitchenTable/KitchenTable.usd")
