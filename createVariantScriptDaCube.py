@@ -59,7 +59,7 @@ vset2 = createVariantSet(Xf_selected, "SizeVariantSet")
 # TODO: variant names should come from the user
 # TODO: variant content should also come from the user (for now, file)
 # Using test data from TestData/daCube - it is important the way these files are structured because property that is being changed in one variant cannot be in the other
-createVariantForSet(Xf_selected, vset, "vs_color_pink", "/Users/natashadaas/USD_Switchboard/Tests/daCube/ColorVariantSet/daCubePink.usda")
-createVariantForSet(Xf_selected, vset, "vs_color_blue", "/Users/natashadaas/USD_Switchboard/Tests/daCube/ColorVariantSet/daCubeBlue.usda")
-createVariantForSet(Xf_selected, vset2, "vs_size_small", "/Users/natashadaas/USD_Switchboard/Tests/daCube/SizeVariantSet/daCubeSmall.usda")
-createVariantForSet(Xf_selected, vset2, "vs_size_big", "/Users/natashadaas/USD_Switchboard/Tests/daCube/SizeVariantSet/daCubeBig.usda")
+createVariantForSet(Xf_selected, vset, "vs_color_pink", "/Users/natashadaas/USD_Switchboard/TestData/daCube/ColorVariantSet/daCubePink.usda")
+createVariantForSet(Xf_selected, vset, "vs_color_blue", "/Users/natashadaas/USD_Switchboard/TestData/daCube/ColorVariantSet/daCubeBlue.usda")
+createVariantForSet(Xf_selected, vset2, "vs_size_small", "/Users/natashadaas/USD_Switchboard/TestData/daCube/SizeVariantSet/daCubeSmall.usda")
+createVariantForSet(Xf_selected, vset2, "vs_size_big", "/Users/natashadaas/USD_Switchboard/TestData/daCube/SizeVariantSet/daCubeBig.usda")
