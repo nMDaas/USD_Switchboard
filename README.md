@@ -9,5 +9,5 @@
 - **createVariantScript_GEO.py**: step by step workflow, using 3 files:
   - **ExportBaseMeshAsUSD.py**
   - **CreateGeoVariantFromUSDFile.py**
-  - **DuplicateAsMayaData.py**)
+  - **DuplicateAsMayaData.py**
 - TODO: needs a User Interface
