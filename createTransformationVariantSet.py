@@ -2,12 +2,18 @@ import ufe
 import mayaUsd.ufe
 from pxr import Usd, UsdGeom, Gf
 
-# This is for creating a transformation variant set for an Xform
-# How to use: 
-# 1. Select the XForm under which the prim exists
-# 2. With the Xform selected, move it to a desired position
-# 3. Set the variant set name and variant name
-# 4. Run the script
+"""
+----------------------------------------------------------------------
+This is for creating a transformation variant set for an Xform
+
+How to use: 
+1. Select the XForm under which the prim exists
+2. With the Xform selected, move it to a desired position
+3. Set the variant set name and variant name
+4. Run the script
+----------------------------------------------------------------------
+
+"""
 
 def get_selected_usd_prim():
     selection = ufe.GlobalSelection.get()
