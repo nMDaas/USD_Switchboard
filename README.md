@@ -6,5 +6,8 @@
 - **createTransformationVariantSet.py** allows setting up transformation variants. uses a script to record what changes were made and adds an additional xformOpOrder to account for other transformations 
 
 ### Workflow To Create A Variant Set "GEO" with Base Mesh Variants 
-- **createVariantScript_GEO.py**: step by step workflow, using 3 files (**ExportBaseMeshAsUSD.py**, **CreateGeoVariantFromUSDFile.py**, **DuplicateAsMayaData.py**)
+- **createVariantScript_GEO.py**: step by step workflow, using 3 files:
+  - **ExportBaseMeshAsUSD.py**
+  - **CreateGeoVariantFromUSDFile.py**
+  - **DuplicateAsMayaData.py**)
 - TODO: needs a User Interface
