@@ -109,9 +109,6 @@ def showWindow():
     global icon_path
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
     icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
-    ui.select_button.setIcon(QIcon(str(icon_path)))
-    ui.select_button.setIconSize(QSize(22,22))
-    ui.select_button.setFlat(True)
 
     file_selected = ""
 
@@ -133,21 +130,39 @@ def showWindow():
         else:
             ui.select_button.setIcon(QIcon(str(icon_path)))
 
+    def open_folder(row_number):
+        print(f"Opening folder for row: {row_number}")
+        # Now you can find the specific LineEdit for this row:
+        line_edit = ui.findChild(QLineEdit, f"variant_input_{row_number}")
+        if line_edit:
+            print(f"Current text is: {line_edit.text()}")
+
     def add_variant_row():
         global icon_path
 
+        # Create widgets
         label = QLabel(f"Variant: ")
         variant_name_line_edit = QLineEdit()
         folderButton = QPushButton()
+
+        # Setting folderButton settings
         folderButton.setIcon(QIcon(str(icon_path)))
         folderButton.setIconSize(QSize(22,22))
         folderButton.setFlat(True)
 
-        # Add to the grid layout in new row
+        # Get new row index
         rowIndex = ui.gridLayout.rowCount()
+
+        # Setting object names
+        variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
+        folderButton.setObjectName(f"select_button_{rowIndex}")
+
+        # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
         ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
+
+        folderButton.clicked.connect(lambda checked=False, r=rowIndex: open_folder(r))
 
     #apply button clicked
     @one_undo
@@ -160,7 +175,6 @@ def showWindow():
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
-    ui.select_button.clicked.connect(partial(showDialogForUSDFileSelection))
     ui.addVariantButton.clicked.connect(add_variant_row)
      
     # show the QT ui
