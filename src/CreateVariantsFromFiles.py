@@ -14,6 +14,9 @@ from shiboken6 import wrapInstance
 from functools import wraps
 import math
 import os
+import ufe
+import mayaUsd.ufe
+from pxr import Usd, UsdGeom
 
 def one_undo(func):
     """
@@ -30,6 +33,33 @@ def one_undo(func):
         finally:
             cmds.undoInfo(closeChunk=True)
     return wrap
+
+# Gets the selected USD XForm in the outliner
+def get_selected_usd_xform_prim():
+    # Get the current UFE (Universal Front End) selection made by user in outliner
+    selection = ufe.GlobalSelection.get()
+
+    # TODO: Error should be generated if nothing was selected
+    if selection.empty():
+        print("Nothing selected.")
+        return None
+    
+    # Get last item in the selection
+    selected_item = list(selection)[-1]
+
+    # Convert UFE path object to a string path
+    ufe_path_obj = selected_item.path()
+    ufe_path_string = ufe.PathString.string(ufe_path_obj)
+
+    # Access prim via string path
+    prim = mayaUsd.ufe.ufePathToPrim(ufe_path_string)
+    
+    # Ensure prim is an Xform
+    if (not prim.IsA(UsdGeom.Xform)):
+        #TODO: Error should be generated if XForm was not selected
+        print("XForm prim must be selected for variant set creation.")
+
+    return prim.GetPath()
         
 #show gui window
 def showWindow():
@@ -83,6 +113,9 @@ def showWindow():
     ui.select_button.clicked.connect(partial(showDialog))
      
     # show the QT ui
+    targetPrimPath = get_selected_usd_xform_prim()
+    ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
+    
     ui.show()
     return ui
 
