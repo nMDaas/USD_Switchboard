@@ -166,11 +166,19 @@ def showWindow():
     #apply button clicked
     @one_undo
     def apply():
-        global file_selected
+        global usd_filepath_dict
         variant_set_name = ui.vs_name_input.text()
+
         vset = createVariantSet(targetPrim, variant_set_name)
-        v_name_input = ui.vs_name_input.text()
-        createVariantForSet(targetPrim, vset, v_name_input, file_selected)
+
+        # Iterate through all num_variants
+        # num_variants = ui.gridLayout.rowCount() - 1
+        for i in range(1, ui.gridLayout.rowCount()):
+            print(i)
+            v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
+            v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
+            file_selected = usd_filepath_dict[i]
+            createVariantForSet(targetPrim, vset, v_name_input, file_selected)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
