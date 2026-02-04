@@ -110,9 +110,9 @@ def showWindow():
     targetPrim = get_selected_usd_xform_prim()
     targetPrimPath = targetPrim.GetPath()
     ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
-    global icon_path
-    icon_path = Path(__file__).parent / "icons" / "open-folder.png"
-    icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
+    global open_folder_icon
+    open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
+    folder_chosen_icon = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
 
     # open dialog for user to select USD file - linked to row number
     def openDialogForUSDFileSelection(row_number):
@@ -132,12 +132,12 @@ def showWindow():
             file_selected = dialog.selectedFiles()[0]
             global usd_filepath_dict
             usd_filepath_dict[row_number] = file_selected
-            select_button.setIcon(QIcon(str(icon_path2)))
+            select_button.setIcon(QIcon(str(folder_chosen_icon)))
         else:
-            select_button.setIcon(QIcon(str(icon_path)))
+            select_button.setIcon(QIcon(str(open_folder_icon)))
 
     def add_variant_row():
-        global icon_path
+        global open_folder_icon
 
         # Create widgets
         label = QLabel(f"Variant: ")
@@ -145,7 +145,7 @@ def showWindow():
         folderButton = QPushButton()
 
         # Setting folderButton settings
-        folderButton.setIcon(QIcon(str(icon_path)))
+        folderButton.setIcon(QIcon(str(open_folder_icon)))
         folderButton.setIconSize(QSize(22,22))
         folderButton.setFlat(True)
 
