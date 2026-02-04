@@ -100,8 +100,9 @@ def showWindow():
     ui.setObjectName('Create Variants From USD Files')
     ui.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
 
-    global folder_path
-    folder_path = ''
+    global default_initial_directory
+    # TODO: should check if this works in Windows
+    default_initial_directory = cmds.workspace(query=True, rootDirectory=True) 
 
     # stores [row, filepath]
     global usd_filepath_dict
@@ -121,20 +122,21 @@ def showWindow():
     def openDialogForUSDFileSelection(row_number):
         select_button = ui.findChild(QPushButton, f"select_button_{row_number}")
 
-        initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
+        global default_initial_directory
 
         dialog = QFileDialog()
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        dialog.setDirectory(initial_directory)
+        dialog.setDirectory(default_initial_directory)
         dialog.setWindowTitle("Select USD File")
-
-        global folder_path
 
         # show which filename was selected if a folder was selected
         if dialog.exec_():
             file_selected = dialog.selectedFiles()[0]
             global usd_filepath_dict
             usd_filepath_dict[row_number] = file_selected
+
+            # set default_initial_directory so it's easier for the user
+            default_initial_directory = str(Path(file_selected).parent)
             select_button.setIcon(QIcon(str(folder_chosen_icon)))
         else:
             select_button.setIcon(QIcon(str(open_folder_icon)))
