@@ -103,6 +103,10 @@ def showWindow():
     global folder_path
     folder_path = ''
 
+    # stores [row, filepath]
+    global usd_filepath_dict
+    usd_filepath_dict = {}
+
     targetPrim = get_selected_usd_xform_prim()
     targetPrimPath = targetPrim.GetPath()
     ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
@@ -110,12 +114,12 @@ def showWindow():
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
     icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
 
-    file_selected = ""
+    # open dialog for user to select USD file - linked to row number
+    def openDialogForUSDFileSelection(row_number):
+        select_button = ui.findChild(QPushButton, f"select_button_{row_number}")
 
-    # open dialog to allow user to choose texture folder
-    def showDialogForUSDFileSelection():
-        global file_selected
         initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
+
         dialog = QFileDialog()
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
         dialog.setDirectory(initial_directory)
@@ -126,16 +130,11 @@ def showWindow():
         # show which filename was selected if a folder was selected
         if dialog.exec_():
             file_selected = dialog.selectedFiles()[0]
-            ui.select_button.setIcon(QIcon(str(icon_path2)))
+            global usd_filepath_dict
+            usd_filepath_dict[row_number] = file_selected
+            select_button.setIcon(QIcon(str(icon_path2)))
         else:
-            ui.select_button.setIcon(QIcon(str(icon_path)))
-
-    def open_folder(row_number):
-        print(f"Opening folder for row: {row_number}")
-        # Now you can find the specific LineEdit for this row:
-        line_edit = ui.findChild(QLineEdit, f"variant_input_{row_number}")
-        if line_edit:
-            print(f"Current text is: {line_edit.text()}")
+            select_button.setIcon(QIcon(str(icon_path)))
 
     def add_variant_row():
         global icon_path
@@ -162,7 +161,7 @@ def showWindow():
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
         ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
 
-        folderButton.clicked.connect(lambda checked=False, r=rowIndex: open_folder(r))
+        folderButton.clicked.connect(lambda checked=False, r=rowIndex: openDialogForUSDFileSelection(r))
 
     #apply button clicked
     @one_undo
