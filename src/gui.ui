@@ -30,73 +30,45 @@
             </property>
         </widget>
 
-        <widget class="QWidget" name="gridLayoutWidget">
+         <widget class="QScrollArea" name="scrollArea">
             <property name="geometry">
                 <rect>
                     <x>30</x>
-                    <y>30</y>
-                    <width>361</width>
-                    <height>100</height>
-                </rect>
+                    <y>40</y>
+                    <width>400</width>
+                    <height>120</height> </rect>
             </property>
+            <property name="widgetResizable">
+                <bool>true</bool> </property>
 
-            <layout class="QGridLayout" name="gridLayout">
-                <item row="0" column="0">
-                    <layout class="QVBoxLayout" name="vs_name_label">
-                        <item>
-                            <widget class="QLabel" name="label">
-                                <property name="text">
-                                    <string>Variant Set Name:</string>
-                                </property>
-                            </widget>
-                        </item>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+                <layout class="QGridLayout" name="gridLayout">
+                    <item row="0" column="0">
+                        <widget class="QLabel" name="label"><property name="text"><string>Variant Set Name:</string></property></widget>
+                    </item>
+                    <item row="0" column="1">
+                        <widget class="QLineEdit" name="vs_name_input"></widget>
+                    </item>
+                    <item row="0" column="2">
+                        <widget class="QPushButton" name="select_button">
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                    </item>
+                    
                     </layout>
-                </item>
-                <item row="0" column="1">
-                    <widget class="QLineEdit" name="vs_name_input">
-                        <property name="text">
-                            <string></string>
-                        </property>
-                    </widget>
-                </item>
-
-                <!-- row 2 -->
-                <item row="2" column="0">
-                    <layout class="QVBoxLayout" name="v_name_label">
-                        <item>
-                            <widget class="QLabel" name="label">
-                                <property name="text">
-                                    <string>Variant:</string>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </item>
-                <item row="2" column="1">
-                    <widget class="QLineEdit" name="v_name_input">
-                        <property name="text">
-                            <string></string>
-                        </property>
-                    </widget>
-                </item>
-                <item row="2" column="2">
-                    <widget class="QPushButton" name="select_button">
-                        <property name="text">
-                            <string></string>
-                        </property>
-                    </widget>
-                </item>
-            </layout>
+            </widget>
         </widget>
 
-        <widget class="QPushButton" name="warnings">
+        <widget class="QPushButton" name="addVariantButton">
             <property name="text">
                 <string> + Variant </string>
             </property>
             <property name="geometry">
                 <rect>
                     <x>30</x>
-                    <y>150</y>
+                    <y>170</y>
                     <width>400</width>
                     <height>32</height>
                 </rect>
@@ -121,7 +93,7 @@
             <property name="geometry">
                 <rect>
                     <x>30</x>
-                    <y>200</y>
+                    <y>210</y>
                     <width>100</width>
                     <height>32</height>
                 </rect>
