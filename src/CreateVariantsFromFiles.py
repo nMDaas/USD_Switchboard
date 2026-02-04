@@ -107,9 +107,12 @@ def showWindow():
     global usd_filepath_dict
     usd_filepath_dict = {}
 
+    # set targetPrim - the XForm that will have the variant
     targetPrim = get_selected_usd_xform_prim()
     targetPrimPath = targetPrim.GetPath()
     ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
+
+    # icon paths
     global open_folder_icon
     open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
     folder_chosen_icon = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
