@@ -35,6 +35,7 @@ def one_undo(func):
     return wrap
 
 # Gets the selected USD XForm in the outliner
+#TODO: possibly can be moved into a utils file
 def get_selected_usd_xform_prim():
     # Get the current UFE (Universal Front End) selection made by user in outliner
     selection = ufe.GlobalSelection.get()
@@ -59,7 +60,13 @@ def get_selected_usd_xform_prim():
         #TODO: Error should be generated if XForm was not selected
         print("XForm prim must be selected for variant set creation.")
 
-    return prim.GetPath()
+    return prim
+
+# Creates a variant set of a given name for a given XForm
+#TODO: move into a special utils file because this will be used everywhere
+def createVariantSet(Xf_selected, in_vset_name):
+    vset = Xf_selected.GetVariantSets().AddVariantSet(in_vset_name)
+    return vset
         
 #show gui window
 def showWindow():
@@ -84,6 +91,10 @@ def showWindow():
     global folder_path
     folder_path = ''
 
+    targetPrim = get_selected_usd_xform_prim()
+    targetPrimPath = targetPrim.GetPath()
+    ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
+
     # open dialog to allow user to choose texture folder
     def showDialog():
         initial_directory = "/Users/natashadaas"  # Replace this with the desired initial directory
@@ -106,16 +117,14 @@ def showWindow():
     #apply button clicked
     @one_undo
     def apply():
-        print("Apply clicked")
+        variant_set_name = ui.vs_name_input.text()
+        createVariantSet(targetPrim, variant_set_name)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
     ui.select_button.clicked.connect(partial(showDialog))
      
     # show the QT ui
-    targetPrimPath = get_selected_usd_xform_prim()
-    ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
-    
     ui.show()
     return ui
 
