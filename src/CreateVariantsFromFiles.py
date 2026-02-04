@@ -149,9 +149,6 @@ def showWindow():
         variant_name_line_edit = QLineEdit()
         folderButton = QPushButton()
 
-        # if this is the first variant, set name automatically to "Default"
-        variant_name_line_edit.setText("Default")
-
         # Setting folderButton settings
         folderButton.setIcon(QIcon(str(open_folder_icon)))
         folderButton.setIconSize(QSize(22,22))
@@ -159,6 +156,10 @@ def showWindow():
 
         # Get new row index
         rowIndex = ui.gridLayout.rowCount()
+
+        # if this is the first variant, set name automatically to "Default"
+        if (rowIndex == 1):
+            variant_name_line_edit.setText("Default")
 
         # Setting object names
         variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
