@@ -34,7 +34,6 @@ def createVariantSet(Xf_selected, in_vset_name):
     vset = Xf_selected.GetVariantSets().AddVariantSet(in_vset_name)
     return vset
 
-# Currently kind of a "dummy" implementation - num is to create spheres of different radii
 #TODO: There should be error checking for if the variant_name already exists for the vset
 def createVariantForSet(Xf_prim, vset, variant_name, file_path):
     vset.AddVariant(variant_name)
