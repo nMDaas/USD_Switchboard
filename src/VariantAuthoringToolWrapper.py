@@ -18,6 +18,8 @@ import ufe
 import mayaUsd.ufe
 from pxr import Usd, UsdGeom
 
+from VariantAuthoringTool import VariantAuthoringTool
+
 def one_undo(func):
     """
     Decorator - guarantee close chunk.
@@ -89,5 +91,22 @@ def showWindow():
     ui.show()
     return ui
 
+def executeWrapper():
+    # Create two instances (objects) of the Dog class
+    dog1 = VariantAuthoringTool("Buddy", 3)
+    dog2 = VariantAuthoringTool("Lucy", 5)
+
+    # Access attributes of the objects
+    print(f"{dog1.name} is {dog1.age} years old.")
+    print(f"{dog2.name} is {dog2.age} years old.")
+
+    # Call a method on an object
+    print(dog1.bark())
+    print(dog2.bark())
+
+    #window=showWindow()
+
 if __name__ == "__main__":
-    window=showWindow()
+    executeWrapper()
+
+   
