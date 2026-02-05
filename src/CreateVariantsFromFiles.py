@@ -146,7 +146,10 @@ def showWindow():
     # TODO: Should account for other kinds of variant sets so this might look different later
     vsets = getVariantSets(targetPrim)
     vset_names = vsets.GetNames()
+    global creatingNewVariant
+    creatingNewVariant = True
     if (len(vset_names) > 0):
+        creatingNewVariant = False
         # Variant set already exists on targetPrim 
         existing_vs_name = vset_names[0]
 
@@ -220,6 +223,7 @@ def showWindow():
     @one_undo
     def apply():
         global usd_filepath_dict
+        global creatingNewVariant
         variant_set_name = ui.vs_name_input.text()
 
         vset = createVariantSet(targetPrim, variant_set_name)
@@ -228,14 +232,18 @@ def showWindow():
         # num_variants = ui.gridLayout.rowCount() - 1
         for i in range(1, ui.gridLayout.rowCount()):
             v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
-            v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
-            file_selected = usd_filepath_dict[i]
-            createVariantForSet(targetPrim, vset, v_name_input, file_selected)
 
-        # set default variant as the first variant
-        v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
-        v_name_input_1 = v_name_input_widget_1.text().strip() 
-        vset.SetVariantSelection(v_name_input_1)
+            # Only make variants for NEW variants (ones that do not have object name pattern of variant_input_x)
+            if v_name_input_widget:
+                v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
+                file_selected = usd_filepath_dict[i]
+                createVariantForSet(targetPrim, vset, v_name_input, file_selected)
+
+            if (creatingNewVariant):
+                # set default variant as the first variant
+                v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
+                v_name_input_1 = v_name_input_widget_1.text().strip() 
+                vset.SetVariantSelection(v_name_input_1)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
