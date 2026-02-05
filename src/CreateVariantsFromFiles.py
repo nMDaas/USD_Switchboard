@@ -68,6 +68,12 @@ def createVariantSet(Xf_selected, in_vset_name):
     vset = Xf_selected.GetVariantSets().AddVariantSet(in_vset_name)
     return vset
 
+# Get number variant sets for XForm
+# TODO: Warning if XForm not selected
+def getVariantSets(Xf_selected):
+    vsets = Xf_selected.GetVariantSets()
+    return vsets
+
 #TODO: There should be error checking for if the variant_name already exists for the vset
 def createVariantForSet(Xf_prim, vset, variant_name, file_path):
     vset.AddVariant(variant_name)
@@ -113,6 +119,44 @@ def showWindow():
     targetPrimPath = targetPrim.GetPath()
     ui.targetPrim.setText(f"Target Prim: {targetPrimPath}")
 
+    def add_existing_variant_row(v_name):
+        label = QLabel(f"Variant: ")
+        variant_name_label = QLineEdit()
+
+        # Set name of variant name and as read only
+        variant_name_label.setText(v_name)
+        variant_name_label.setReadOnly(True)
+        
+        # Get new row index
+        rowIndex = ui.gridLayout.rowCount()
+
+        # Add to the grid layout in new row
+        ui.gridLayout.addWidget(label, rowIndex, 0)
+        ui.gridLayout.addWidget(variant_name_label, rowIndex, 1)  
+
+    def populateVariantSet(vset_name):
+        variants = vset_name.GetVariantNames()
+        for v in variants:
+            add_existing_variant_row(v)
+
+    # Check if the targetPrim already has a variant or not
+    # Either: 
+    # (A) It has a variant set, and we can edit the variant set
+    # or (B) It does not have a variant set and we can create a new one
+    # TODO: Should account for other kinds of variant sets so this might look different later
+    vsets = getVariantSets(targetPrim)
+    vset_names = vsets.GetNames()
+    if (len(vset_names) > 0):
+        # Variant set already exists on targetPrim 
+        existing_vs_name = vset_names[0]
+
+        # Set in the UI so the user knows there is already a variant on the targetPrim
+        ui.vs_name_input.setText(existing_vs_name)
+
+        # TODO: this is currently only populating the first one
+        vset = vsets.GetVariantSet(existing_vs_name)
+        populateVariantSet(vset)
+
     # icon paths
     global open_folder_icon
     open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
@@ -139,7 +183,7 @@ def showWindow():
             default_initial_directory = str(Path(file_selected).parent)
             select_button.setIcon(QIcon(str(folder_chosen_icon)))
         else:
-            select_button.setIcon(QIcon(str(open_folder_icon)))
+            select_button.setIcon(QIcon(str(open_folder_icon)))  
 
     def add_variant_row():
         global open_folder_icon
