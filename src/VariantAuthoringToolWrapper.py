@@ -18,6 +18,11 @@ import ufe
 import mayaUsd.ufe
 from pxr import Usd, UsdGeom
 
+import sys
+my_script_dir = "/Users/natashadaas/USD_Switchboard/src" 
+if my_script_dir not in sys.path:
+    sys.path.append(my_script_dir)
+
 from VariantAuthoringTool import VariantAuthoringTool
 
 def one_undo(func):
