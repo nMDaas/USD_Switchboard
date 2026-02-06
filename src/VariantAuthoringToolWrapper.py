@@ -92,20 +92,7 @@ def showWindow(tool):
             ui.select_button.setIcon(QIcon(str(icon_path)))
 
     def add_variant_row():
-        global icon_path
-
-        label = QLabel(f"Variant: ")
-        variant_name_line_edit = QLineEdit()
-        folderButton = QPushButton()
-        folderButton.setIcon(QIcon(str(icon_path)))
-        folderButton.setIconSize(QSize(22,22))
-        folderButton.setFlat(True)
-
-        # Add to the grid layout in new row
-        rowIndex = ui.gridLayout.rowCount()
-        ui.gridLayout.addWidget(label, rowIndex, 0)
-        ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
-        ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
+        tool.add_variant_row(ui)
 
     #apply button clicked
     @one_undo

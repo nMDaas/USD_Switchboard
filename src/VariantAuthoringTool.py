@@ -1,15 +1,34 @@
 import sys
+from PySide6.QtCore import * 
+from PySide6.QtGui import *
+from PySide6.QtUiTools import *
+from PySide6.QtWidgets import *
+from functools import partial
+import maya.cmds as cmds
+from maya import OpenMayaUI
+from pathlib import Path
+from shiboken6 import wrapInstance
+from functools import wraps
+import math
+import os
+import ufe
+import mayaUsd.ufe
+from pxr import Usd, UsdGeom
+
 my_script_dir = "/Users/natashadaas/USD_Switchboard/src" 
 if my_script_dir not in sys.path:
     sys.path.append(my_script_dir)
 
 from usd_utils import get_selected_usd_xform_prim
 
+# ------------------------------------------------------------------------------------------
+
 class VariantAuthoringTool:
     def __init__(self, _tool_name):
         self.tool_name = _tool_name
         self.targetPrim = get_selected_usd_xform_prim()
         self.fileSelected = "" # only considering one
+        self.icon_path = Path(__file__).parent / "icons" / "open-folder.png"
 
     # SETTERS ------------------------------------------------------------------------------
 
@@ -23,6 +42,22 @@ class VariantAuthoringTool:
     
     def getTargetPrimPath(self):
         return self.targetPrim.GetPath()
+    
+    # UI FUNCTIONS -------------------------------------------------------------------------
+
+    def add_variant_row(self, ui):
+        label = QLabel(f"Variant: ")
+        variant_name_line_edit = QLineEdit()
+        folderButton = QPushButton()
+        folderButton.setIcon(QIcon(str(self.icon_path)))
+        folderButton.setIconSize(QSize(22,22))
+        folderButton.setFlat(True)
+
+        # Add to the grid layout in new row
+        rowIndex = ui.gridLayout.rowCount()
+        ui.gridLayout.addWidget(label, rowIndex, 0)
+        ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
+        ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
     
