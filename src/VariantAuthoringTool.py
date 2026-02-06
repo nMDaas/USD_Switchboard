@@ -51,6 +51,13 @@ class VariantAuthoringTool:
     def getTargetPrimPath(self):
         return self.targetPrim.GetPath()
     
+    # UI SETUP -----------------------------------------------------------------------------
+
+    def setupUserInterface(self, ui):
+        ui.setWindowTitle(self.getToolName())
+        ui.setObjectName(self.getToolName())
+        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+    
     # UI FUNCTIONS -------------------------------------------------------------------------
 
     def open_folder(self, ui, row_number):

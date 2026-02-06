@@ -64,11 +64,7 @@ def showWindow(tool):
     folder_path = ''
 
     # tool specific set up
-    ui.setWindowTitle(tool.getToolName())
-    ui.setObjectName(tool.getToolName())
-    ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
-    global icon_path
-    icon_path = Path(__file__).parent / "icons" / "open-folder.png"
+    tool.setupUserInterface(ui)
 
     def add_variant_row():
         tool.add_variant_row(ui)
