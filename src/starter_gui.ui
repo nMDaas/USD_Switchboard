@@ -30,13 +30,32 @@
             </property>
         </widget>
 
+        <widget class="QWidget" name="gridLayout_vs_container">
+            <property name="geometry">
+                <rect>
+                    <x>30</x>
+                    <y>-5</y>
+                    <width>400</width>
+                    <height>120</height> </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_vs">
+                <item row="0" column="0">
+                    <widget class="QLabel" name="label"><property name="text"><string>Variant Set Name:</string></property></widget>
+                </item>
+                <item row="0" column="1">
+                    <widget class="QLineEdit" name="vs_name_input"></widget>
+                </item>
+                
+            </layout>
+        </widget>
+
          <widget class="QScrollArea" name="scrollArea">
             <property name="geometry">
                 <rect>
                     <x>30</x>
-                    <y>40</y>
+                    <y>80</y>
                     <width>400</width>
-                    <height>120</height> </rect>
+                    <height>100</height> </rect>
             </property>
             <property name="widgetResizable">
                 <bool>true</bool> </property>
@@ -44,42 +63,28 @@
             <widget class="QWidget" name="scrollAreaWidgetContents">
                 <layout class="QGridLayout" name="gridLayout">
                     <item row="0" column="0">
-                        <widget class="QLabel" name="label"><property name="text"><string>Variant Set Name:</string></property></widget>
+                        <widget class="QPushButton" name="addVariantButton">
+                            <property name="text">
+                                <string> + Variant </string>
+                            </property>
+                            <property name="flat">
+                                <bool>true</bool>
+                            </property>
+                            <property name="styleSheet">
+                                <string>
+                                    QPushButton {
+                                        border: 1px dashed #999;
+                                        padding: 6px;
+                                    }
+                                    QPushButton:hover {
+                                        border-color: #666;
+                                    }
+                                </string>
+                            </property>
+                        </widget>
                     </item>
-                    <item row="0" column="1">
-                        <widget class="QLineEdit" name="vs_name_input"></widget>
-                    </item>
-                    
-                    </layout>
+                </layout>
             </widget>
-        </widget>
-
-        <widget class="QPushButton" name="addVariantButton">
-            <property name="text">
-                <string> + Variant </string>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>30</x>
-                    <y>170</y>
-                    <width>400</width>
-                    <height>32</height>
-                </rect>
-            </property>
-            <property name="flat">
-                <bool>true</bool>
-            </property>
-            <property name="styleSheet">
-                <string>
-                    QPushButton {
-                        border: 1px dashed #999;
-                        padding: 6px;
-                    }
-                    QPushButton:hover {
-                        border-color: #666;
-                    }
-                </string>
-            </property>
         </widget>
 
         <widget class="QPushButton" name="apply_button">
