@@ -93,6 +93,7 @@ def showWindow(tool):
     ui.select_button.clicked.connect(partial(showDialog))
      
     # show the QT ui
+    ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrim()}")
     ui.show()
     return ui
 
