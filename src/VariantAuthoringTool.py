@@ -26,11 +26,14 @@ from usd_utils import get_selected_usd_xform_prim
 class VariantAuthoringTool:
     def __init__(self, _tool_name):
         self.tool_name = _tool_name
-        self.targetPrim = get_selected_usd_xform_prim()
+        self.targetPrim = get_selected_usd_xform_prim() # set targetPrim - the XForm that will have the variant
         self.fileSelected = "" # only considering one
+        self.usd_filepath_dict = {} # stores [row, filepath]
+
+        # icon paths
         self.open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
         self.folder_chosen_icon  = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
-        self.usd_filepath_dict = {} # stores [row, filepath]
+        
 
     # SETTERS ------------------------------------------------------------------------------
 
