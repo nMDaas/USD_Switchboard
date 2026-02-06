@@ -57,6 +57,25 @@ class VariantAuthoringTool:
         ui.setWindowTitle(self.getToolName())
         ui.setObjectName(self.getToolName())
         ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+
+        # Check if the targetPrim already has a variant or not
+        # Either: 
+        # (A) It has a variant set, and we can edit the variant set
+        # or (B) It does not have a variant set and we can create a new one
+        # TODO: Should account for other kinds of variant sets so this might look different later
+        vsets = self.getVariantSetsOfTargetPrim()
+        vset_names = vsets.GetNames()
+        # If variant set already exists on targetPrim 
+        if (len(vset_names) > 0):
+            existing_vs_name = vset_names[0]
+
+            # Set in the UI so the user knows there is already a variant on the targetPrim
+            ui.vs_name_input.setText(existing_vs_name)
+
+            # TODO: this is currently only populating the first one
+            vset = vsets.GetVariantSet(existing_vs_name)
+            self.populateVariantSet(ui, vset)
+
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 
@@ -116,8 +135,34 @@ class VariantAuthoringTool:
             select_button.setIcon(QIcon(str(self.folder_chosen_icon)))
         else:
             select_button.setIcon(QIcon(str(self.open_folder_icon))) 
+
+    def add_existing_variant_row(self, ui, v_name):
+        label = QLabel(f"Variant: ")
+        variant_name_label = QLineEdit()
+
+        # Set name of variant name and as read only
+        variant_name_label.setText(v_name)
+        variant_name_label.setReadOnly(True)
+        
+        # Get new row index
+        rowIndex = ui.gridLayout.rowCount()
+
+        # Add to the grid layout in new row
+        ui.gridLayout.addWidget(label, rowIndex, 0)
+        ui.gridLayout.addWidget(variant_name_label, rowIndex, 1)  
+
+    def populateVariantSet(self, ui, vset_name):
+        variants = vset_name.GetVariantNames()
+        for v in variants:
+            self.add_existing_variant_row(ui, v)
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
+
+    # Get number variant sets for XForm
+    # TODO: Warning if XForm not selected
+    def getVariantSetsOfTargetPrim(self):
+        vsets = self.targetPrim.GetVariantSets()
+        return vsets
     
     # Creates a variant set of a given name for a given XForm
     def createVariantSet(self, in_vset_name):
