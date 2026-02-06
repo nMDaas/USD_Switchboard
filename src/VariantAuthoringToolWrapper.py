@@ -69,10 +69,6 @@ def showWindow(tool):
     ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
     global icon_path
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
-    icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
-    ui.select_button.setIcon(QIcon(str(icon_path)))
-    ui.select_button.setIconSize(QSize(22,22))
-    ui.select_button.setFlat(True)
 
     # open dialog to allow user to choose texture folder
     def showDialogForUSDFileSelection():
@@ -91,7 +87,6 @@ def showWindow(tool):
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
-    ui.select_button.clicked.connect(partial(showDialogForUSDFileSelection))
     ui.addVariantButton.clicked.connect(add_variant_row)
      
     # show the QT ui

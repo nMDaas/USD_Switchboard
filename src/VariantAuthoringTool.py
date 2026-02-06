@@ -46,19 +46,37 @@ class VariantAuthoringTool:
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 
+    def open_folder(self, ui, row_number):
+        print(f"Opening folder for row: {row_number}")
+        # Now you can find the specific LineEdit for this row:
+        line_edit = ui.findChild(QLineEdit, f"variant_input_{row_number}")
+        if line_edit:
+            print(f"Current text is: {line_edit.text()}")
+
     def add_variant_row(self, ui):
+        # Create widgets
         label = QLabel(f"Variant: ")
         variant_name_line_edit = QLineEdit()
         folderButton = QPushButton()
+
+        # Setting folderButton settings
         folderButton.setIcon(QIcon(str(self.icon_path)))
         folderButton.setIconSize(QSize(22,22))
         folderButton.setFlat(True)
 
-        # Add to the grid layout in new row
+        # Get new row index
         rowIndex = ui.gridLayout.rowCount()
+
+        # Setting object names
+        variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
+        folderButton.setObjectName(f"select_button_{rowIndex}")
+
+        # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
         ui.gridLayout.addWidget(folderButton, rowIndex, 2)   
+
+        folderButton.clicked.connect(lambda checked=False, r=rowIndex: self.open_folder(ui, r))
 
     def showDialogForUSDFileSelection(self, ui):
         initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
