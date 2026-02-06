@@ -30,6 +30,7 @@ class VariantAuthoringTool:
         self.targetPrim = get_selected_usd_xform_prim() # set targetPrim - the XForm that will have the variant
         self.fileSelected = "" # only considering one
         self.usd_filepath_dict = {} # stores [row, filepath]
+        self.creatingNewVariant = True # keeps track of whether we are creating a new variant or not
 
         # icon paths
         self.open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
@@ -67,6 +68,7 @@ class VariantAuthoringTool:
         vset_names = vsets.GetNames()
         # If variant set already exists on targetPrim 
         if (len(vset_names) > 0):
+            self.creatingNewVariant = False
             existing_vs_name = vset_names[0]
 
             # Set in the UI so the user knows there is already a variant on the targetPrim
@@ -187,11 +189,16 @@ class VariantAuthoringTool:
         # num_variants = ui.gridLayout.rowCount() - 1
         for i in range(1, ui.gridLayout.rowCount()):
             v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
-            v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
-            file_selected = self.usd_filepath_dict[i]
-            self.createVariant(vset, v_name_input, file_selected)
 
-        # set default variant as the first variant
-        v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
-        v_name_input_1 = v_name_input_widget_1.text().strip() 
-        vset.SetVariantSelection(v_name_input_1)
+            # Only make variants for NEW variants (ones that do not have object name pattern of variant_input_x)
+            # This works because when populating existing variants, I didn't give it object names
+            if v_name_input_widget:
+                v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
+                file_selected = self.usd_filepath_dict[i]
+                self.createVariant(vset, v_name_input, file_selected)
+
+        # set default variant as the first variant, only if the variant set is new
+        if self.creatingNewVariant:
+            v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
+            v_name_input_1 = v_name_input_widget_1.text().strip() 
+            vset.SetVariantSelection(v_name_input_1)
