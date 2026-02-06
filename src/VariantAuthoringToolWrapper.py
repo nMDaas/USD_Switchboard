@@ -67,6 +67,7 @@ def showWindow(tool):
     ui.setWindowTitle(tool.getToolName())
     ui.setObjectName(tool.getToolName())
     ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
+    global icon_path
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
     icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
     ui.select_button.setIcon(QIcon(str(icon_path)))
@@ -90,6 +91,22 @@ def showWindow(tool):
         else:
             ui.select_button.setIcon(QIcon(str(icon_path)))
 
+    def add_variant_row():
+        global icon_path
+
+        label = QLabel(f"Variant: ")
+        variant_name_line_edit = QLineEdit()
+        folderButton = QPushButton()
+        folderButton.setIcon(QIcon(str(icon_path)))
+        folderButton.setIconSize(QSize(22,22))
+        folderButton.setFlat(True)
+
+        # Add to the grid layout in new row
+        rowIndex = ui.gridLayout.rowCount()
+        ui.gridLayout.addWidget(label, rowIndex, 0)
+        ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
+        ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
+
     #apply button clicked
     @one_undo
     def apply():
@@ -101,6 +118,7 @@ def showWindow(tool):
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
     ui.select_button.clicked.connect(partial(showDialogForUSDFileSelection))
+    ui.addVariantButton.clicked.connect(add_variant_row)
      
     # show the QT ui
     ui.show()
