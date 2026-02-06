@@ -30,6 +30,7 @@ class VariantAuthoringTool:
         self.fileSelected = "" # only considering one
         self.icon_path = Path(__file__).parent / "icons" / "open-folder.png"
         self.icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
+        self.usd_filepath_dict = {} # stores [row, filepath]
 
     # SETTERS ------------------------------------------------------------------------------
 
@@ -76,10 +77,13 @@ class VariantAuthoringTool:
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
         ui.gridLayout.addWidget(folderButton, rowIndex, 2)   
 
-        folderButton.clicked.connect(lambda checked=False, r=rowIndex: self.open_folder(ui, r))
+        folderButton.clicked.connect(lambda checked=False, r=rowIndex: self.showDialogForUSDFileSelection(ui, r))
 
-    def showDialogForUSDFileSelection(self, ui):
+     # open dialog for user to select USD file - linked to row number
+    def showDialogForUSDFileSelection(self, ui, row_number):
         initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
+        select_button = ui.findChild(QPushButton, f"select_button_{row_number}")
+
         dialog = QFileDialog()
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
         dialog.setDirectory(initial_directory)
@@ -87,10 +91,12 @@ class VariantAuthoringTool:
 
         # show which filename was selected if a folder was selected
         if dialog.exec_():
-            self.setFileSelected(dialog.selectedFiles()[0])
-            ui.select_button.setIcon(QIcon(str(self.icon_path2)))
+            file_selected = dialog.selectedFiles()[0]
+            print(f"setting row {str(row_number)} with {file_selected}")
+            self.usd_filepath_dict[row_number] = file_selected
+            select_button.setIcon(QIcon(str(self.icon_path2)))
         else:
-            ui.select_button.setIcon(QIcon(str(self.icon_path))) 
+            select_button.setIcon(QIcon(str(self.icon_path))) 
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
     
