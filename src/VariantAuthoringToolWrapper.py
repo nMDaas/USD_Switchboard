@@ -42,7 +42,7 @@ def one_undo(func):
     return wrap
         
 #show gui window
-def showWindow():
+def showWindow(tool):
     # get this files location so we can find the .ui file in the /ui/ folder alongside it
     UI_FILE = str(Path(__file__).parent.resolve() / "starter_gui.ui")
     loader = QUiLoader()
@@ -57,8 +57,8 @@ def showWindow():
     
     ui.setParent(mayaMainWindow)
     ui.setWindowFlags(Qt.Window)
-    ui.setWindowTitle('Create Variants From USD Files')
-    ui.setObjectName('Create Variants From USD Files')
+    ui.setWindowTitle(tool.getToolName())
+    ui.setObjectName(tool.getToolName())
     ui.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
 
     global folder_path
@@ -97,19 +97,9 @@ def showWindow():
     return ui
 
 def executeWrapper():
-    # Create two instances (objects) of the Dog class
-    dog1 = VariantAuthoringTool("Buddy", 3)
-    dog2 = VariantAuthoringTool("Lucy", 5)
+    tool = VariantAuthoringTool("Create Variants From USD Files")
 
-    # Access attributes of the objects
-    print(f"{dog1.name} is {dog1.age} years old.")
-    print(f"{dog2.name} is {dog2.age} years old.")
-
-    # Call a method on an object
-    print(dog1.bark())
-    print(dog2.bark())
-
-    window=showWindow()
+    window=showWindow(tool)
 
 if __name__ == "__main__":
     executeWrapper()
