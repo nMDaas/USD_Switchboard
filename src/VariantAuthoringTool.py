@@ -74,6 +74,9 @@ class VariantAuthoringTool:
         # Get new row index
         rowIndex = ui.gridLayout.rowCount()
 
+        if (rowIndex == 1):
+            variant_name_line_edit.setText("Default")
+
         # Setting object names
         variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
         folderButton.setObjectName(f"select_button_{rowIndex}")
