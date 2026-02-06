@@ -131,8 +131,12 @@ class VariantAuthoringTool:
         # Iterate through all num_variants
         # num_variants = ui.gridLayout.rowCount() - 1
         for i in range(1, ui.gridLayout.rowCount()):
-            print(i)
             v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
             v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
             file_selected = self.usd_filepath_dict[i]
             self.createVariant(vset, v_name_input, file_selected)
+
+        # set default variant as the first variant
+        v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
+        v_name_input_1 = v_name_input_widget_1.text().strip() 
+        vset.SetVariantSelection(v_name_input_1)
