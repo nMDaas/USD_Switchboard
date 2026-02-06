@@ -82,8 +82,10 @@ def showWindow(tool):
     def apply():
         variant_set_name = ui.vs_name_input.text()
         vset = tool.createVariantSet(variant_set_name)
-        v_name_input = ui.vs_name_input.text()
-        tool.createVariantForSet(vset, v_name_input)
+        
+        #v_name_input = ui.vs_name_input.text()
+        #tool.createVariantForSet(vset, v_name_input)
+        tool.createVariantsForSet(ui, vset)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))

@@ -107,13 +107,23 @@ class VariantAuthoringTool:
     
     #TODO: There should be error checking for if the variant_name already exists for the vset
     #TODO: warning if file has not been selected
-    def createVariantForSet(self, vset, variant_name):
+    def createVariant(self, vset, variant_name, file_selected):
         vset.AddVariant(variant_name)
 
         vset.SetVariantSelection(variant_name)
 
         # Go inside the variant and add the file reference
         with vset.GetVariantEditContext():
-            self.targetPrim.GetReferences().AddReference(self.fileSelected)
+            self.targetPrim.GetReferences().AddReference(file_selected)
         
-        print(f"Variant '{variant_name}' authored with reference to: {self.fileSelected}")
+        print(f"Variant '{variant_name}' authored with reference to: {file_selected}")
+
+    def createVariantsForSet(self, ui, vset):
+        # Iterate through all num_variants
+        # num_variants = ui.gridLayout.rowCount() - 1
+        for i in range(1, ui.gridLayout.rowCount()):
+            print(i)
+            v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
+            v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
+            file_selected = self.usd_filepath_dict[i]
+            self.createVariant(vset, v_name_input, file_selected)
