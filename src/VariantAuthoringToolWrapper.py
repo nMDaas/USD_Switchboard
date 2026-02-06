@@ -73,11 +73,8 @@ def showWindow(tool):
     ui.select_button.setIconSize(QSize(22,22))
     ui.select_button.setFlat(True)
 
-    file_selected = ""
-
     # open dialog to allow user to choose texture folder
     def showDialogForUSDFileSelection():
-        global file_selected
         initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
         dialog = QFileDialog()
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
@@ -88,7 +85,7 @@ def showWindow(tool):
 
         # show which filename was selected if a folder was selected
         if dialog.exec_():
-            file_selected = dialog.selectedFiles()[0]
+            tool.setFileSelected(dialog.selectedFiles()[0])
             ui.select_button.setIcon(QIcon(str(icon_path2)))
         else:
             ui.select_button.setIcon(QIcon(str(icon_path)))
@@ -96,11 +93,10 @@ def showWindow(tool):
     #apply button clicked
     @one_undo
     def apply():
-        global file_selected
         variant_set_name = ui.vs_name_input.text()
         vset = tool.createVariantSet(variant_set_name)
         v_name_input = ui.vs_name_input.text()
-        tool.createVariantForSet(vset, v_name_input, file_selected)
+        tool.createVariantForSet(vset, v_name_input)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
