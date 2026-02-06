@@ -76,20 +76,7 @@ def showWindow(tool):
 
     # open dialog to allow user to choose texture folder
     def showDialogForUSDFileSelection():
-        initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
-        dialog = QFileDialog()
-        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        dialog.setDirectory(initial_directory)
-        dialog.setWindowTitle("Select USD File")
-
-        global folder_path
-
-        # show which filename was selected if a folder was selected
-        if dialog.exec_():
-            tool.setFileSelected(dialog.selectedFiles()[0])
-            ui.select_button.setIcon(QIcon(str(icon_path2)))
-        else:
-            ui.select_button.setIcon(QIcon(str(icon_path)))
+        tool.showDialogForUSDFileSelection(ui)
 
     def add_variant_row():
         tool.add_variant_row(ui)

@@ -29,6 +29,7 @@ class VariantAuthoringTool:
         self.targetPrim = get_selected_usd_xform_prim()
         self.fileSelected = "" # only considering one
         self.icon_path = Path(__file__).parent / "icons" / "open-folder.png"
+        self.icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
 
     # SETTERS ------------------------------------------------------------------------------
 
@@ -57,7 +58,21 @@ class VariantAuthoringTool:
         rowIndex = ui.gridLayout.rowCount()
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
-        ui.gridLayout.addWidget(folderButton, rowIndex, 2)    
+        ui.gridLayout.addWidget(folderButton, rowIndex, 2)   
+
+    def showDialogForUSDFileSelection(self, ui):
+        initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
+        dialog = QFileDialog()
+        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        dialog.setDirectory(initial_directory)
+        dialog.setWindowTitle("Select USD File")
+
+        # show which filename was selected if a folder was selected
+        if dialog.exec_():
+            self.setFileSelected(dialog.selectedFiles()[0])
+            ui.select_button.setIcon(QIcon(str(self.icon_path2)))
+        else:
+            ui.select_button.setIcon(QIcon(str(self.icon_path))) 
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
     
