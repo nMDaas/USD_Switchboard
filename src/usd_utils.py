@@ -39,4 +39,4 @@ def get_selected_usd_xform_prim():
         #TODO: Error should be generated if XForm was not selected
         print("XForm prim must be selected for variant set creation.")
 
-    return prim.GetPath()
+    return prim

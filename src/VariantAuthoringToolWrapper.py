@@ -57,12 +57,16 @@ def showWindow(tool):
     
     ui.setParent(mayaMainWindow)
     ui.setWindowFlags(Qt.Window)
-    ui.setWindowTitle(tool.getToolName())
-    ui.setObjectName(tool.getToolName())
+    
     ui.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
 
     global folder_path
     folder_path = ''
+
+    # tool specific set up
+    ui.setWindowTitle(tool.getToolName())
+    ui.setObjectName(tool.getToolName())
+    ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
 
     # open dialog to allow user to choose texture folder
     def showDialog():
@@ -87,13 +91,14 @@ def showWindow(tool):
     @one_undo
     def apply():
         print("Apply clicked")
+        variant_set_name = ui.vs_name_input.text()
+        tool.createVariantSet(variant_set_name)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
     ui.select_button.clicked.connect(partial(showDialog))
      
     # show the QT ui
-    ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrim()}")
     ui.show()
     return ui
 

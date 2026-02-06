@@ -13,5 +13,10 @@ class VariantAuthoringTool:
     def getToolName(self):
         return self.tool_name
     
-    def getTargetPrim(self):
-        return self.targetPrim
+    def getTargetPrimPath(self):
+        return self.targetPrim.GetPath()
+    
+    # Creates a variant set of a given name for a given XForm
+    def createVariantSet(self, in_vset_name):
+        vset = self.targetPrim.GetVariantSets().AddVariantSet(in_vset_name)
+        return vset
