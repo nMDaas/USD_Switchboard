@@ -68,39 +68,43 @@ def showWindow(tool):
     ui.setObjectName(tool.getToolName())
     ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
+    icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
     ui.select_button.setIcon(QIcon(str(icon_path)))
     ui.select_button.setIconSize(QSize(22,22))
     ui.select_button.setFlat(True)
 
+    file_selected = ""
+
     # open dialog to allow user to choose texture folder
-    def showDialog():
-        initial_directory = "/Users/natashadaas"  # Replace this with the desired initial directory
+    def showDialogForUSDFileSelection():
+        global file_selected
+        initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
         dialog = QFileDialog()
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        dialog.setFileMode(QFileDialog.Directory)
-        dialog.setOption(QFileDialog.ShowDirsOnly, True)
         dialog.setDirectory(initial_directory)
-        dialog.setWindowTitle("Select Folder")
+        dialog.setWindowTitle("Select USD File")
 
         global folder_path
 
         # show which filename was selected if a folder was selected
         if dialog.exec_():
-            folder_path = dialog.selectedFiles()[0]
-            ui.filename_label.setText(folder_path)
+            file_selected = dialog.selectedFiles()[0]
+            ui.select_button.setIcon(QIcon(str(icon_path2)))
         else:
-            ui.filename_label.setText('')
+            ui.select_button.setIcon(QIcon(str(icon_path)))
 
     #apply button clicked
     @one_undo
     def apply():
-        print("Apply clicked")
+        global file_selected
         variant_set_name = ui.vs_name_input.text()
-        tool.createVariantSet(variant_set_name)
+        vset = tool.createVariantSet(variant_set_name)
+        v_name_input = ui.vs_name_input.text()
+        tool.createVariantForSet(vset, v_name_input, file_selected)
 
     #connect buttons to functions
     ui.apply_button.clicked.connect(partial(apply))
-    ui.select_button.clicked.connect(partial(showDialog))
+    ui.select_button.clicked.connect(partial(showDialogForUSDFileSelection))
      
     # show the QT ui
     ui.show()

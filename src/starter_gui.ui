@@ -62,7 +62,7 @@
 
                 <!-- row 2 -->
                 <item row="2" column="0">
-                    <layout class="QVBoxLayout" name="verticalLayout_2">
+                    <layout class="QVBoxLayout" name="v_name_label">
                         <item>
                             <widget class="QLabel" name="label">
                                 <property name="text">
