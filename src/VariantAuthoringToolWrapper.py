@@ -70,10 +70,6 @@ def showWindow(tool):
     global icon_path
     icon_path = Path(__file__).parent / "icons" / "open-folder.png"
 
-    # open dialog to allow user to choose texture folder
-    def showDialogForUSDFileSelection():
-        tool.showDialogForUSDFileSelection(ui)
-
     def add_variant_row():
         tool.add_variant_row(ui)
 
@@ -83,8 +79,6 @@ def showWindow(tool):
         variant_set_name = ui.vs_name_input.text()
         vset = tool.createVariantSet(variant_set_name)
         
-        #v_name_input = ui.vs_name_input.text()
-        #tool.createVariantForSet(vset, v_name_input)
         tool.createVariantsForSet(ui, vset)
 
     #connect buttons to functions
