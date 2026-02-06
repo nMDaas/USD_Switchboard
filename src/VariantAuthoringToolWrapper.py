@@ -44,7 +44,7 @@ def one_undo(func):
 #show gui window
 def showWindow(tool):
     # get this files location so we can find the .ui file in the /ui/ folder alongside it
-    UI_FILE = str(Path(__file__).parent.resolve() / "starter_gui.ui")
+    UI_FILE = str(Path(__file__).parent.resolve() / "gui.ui")
     loader = QUiLoader()
     file = QFile(UI_FILE)
     file.open(QFile.ReadOnly)

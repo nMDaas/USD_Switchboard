@@ -15,8 +15,8 @@ if folder not in sys.path:
 
 if 'src' in sys.modules:
     del sys.modules['src']
-if 'src.CreateVariantsFromFiles' in sys.modules:
-    del sys.modules['src.CreateVariantsFromFiles']
-import src.CreateVariantsFromFiles
+if 'src.VariantAuthoringToolWrapper' in sys.modules:
+    del sys.modules['src.VariantAuthoringToolWrapper']
+import src.VariantAuthoringToolWrapper
 
-window = src.CreateVariantsFromFiles.showWindow()
+window = src.VariantAuthoringToolWrapper.executeWrapper()
