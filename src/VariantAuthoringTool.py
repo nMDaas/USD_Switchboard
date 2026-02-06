@@ -14,6 +14,7 @@ import os
 import ufe
 import mayaUsd.ufe
 from pxr import Usd, UsdGeom
+from PySide6.QtCore import QSettings
 
 my_script_dir = "/Users/natashadaas/USD_Switchboard/src" 
 if my_script_dir not in sys.path:
@@ -33,7 +34,9 @@ class VariantAuthoringTool:
         # icon paths
         self.open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
         self.folder_chosen_icon  = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
-        
+
+        # Set 
+        self.settings = QSettings("USD_Switchboard", "VariantAuthoringTool")
 
     # SETTERS ------------------------------------------------------------------------------
 
@@ -84,7 +87,10 @@ class VariantAuthoringTool:
 
      # open dialog for user to select USD file - linked to row number
     def showDialogForUSDFileSelection(self, ui, row_number):
-        initial_directory = "/Users/natashadaas"  # TODO: Replace this with the desired initial directory
+        if self.settings.value("defaultDirectory") is None:
+            self.settings.setValue("defaultDirectory",  cmds.workspace(query=True, rootDirectory=True))
+
+        initial_directory =  self.settings.value("defaultDirectory")
         select_button = ui.findChild(QPushButton, f"select_button_{row_number}")
 
         dialog = QFileDialog()
@@ -95,7 +101,7 @@ class VariantAuthoringTool:
         # show which filename was selected if a folder was selected
         if dialog.exec_():
             file_selected = dialog.selectedFiles()[0]
-            print(f"setting row {str(row_number)} with {file_selected}")
+            self.settings.setValue("defaultDirectory",  str(Path(file_selected).parent))
             self.usd_filepath_dict[row_number] = file_selected
             select_button.setIcon(QIcon(str(self.folder_chosen_icon)))
         else:
