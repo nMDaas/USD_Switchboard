@@ -82,7 +82,7 @@
                 <item row="2" column="2">
                     <widget class="QPushButton" name="select_button">
                         <property name="text">
-                            <string>Select Folder</string>
+                            <string></string>
                         </property>
                     </widget>
                 </item>

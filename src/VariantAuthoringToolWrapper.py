@@ -67,6 +67,10 @@ def showWindow(tool):
     ui.setWindowTitle(tool.getToolName())
     ui.setObjectName(tool.getToolName())
     ui.targetPrim.setText(f"Target Prim: {tool.getTargetPrimPath()}")
+    icon_path = Path(__file__).parent / "icons" / "open-folder.png"
+    ui.select_button.setIcon(QIcon(str(icon_path)))
+    ui.select_button.setIconSize(QSize(22,22))
+    ui.select_button.setFlat(True)
 
     # open dialog to allow user to choose texture folder
     def showDialog():
