@@ -28,8 +28,8 @@ class VariantAuthoringTool:
         self.tool_name = _tool_name
         self.targetPrim = get_selected_usd_xform_prim()
         self.fileSelected = "" # only considering one
-        self.icon_path = Path(__file__).parent / "icons" / "open-folder.png"
-        self.icon_path2 = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
+        self.open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
+        self.folder_chosen_icon  = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
         self.usd_filepath_dict = {} # stores [row, filepath]
 
     # SETTERS ------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class VariantAuthoringTool:
         folderButton = QPushButton()
 
         # Setting folderButton settings
-        folderButton.setIcon(QIcon(str(self.icon_path)))
+        folderButton.setIcon(QIcon(str(self.open_folder_icon)))
         folderButton.setIconSize(QSize(22,22))
         folderButton.setFlat(True)
 
@@ -94,9 +94,9 @@ class VariantAuthoringTool:
             file_selected = dialog.selectedFiles()[0]
             print(f"setting row {str(row_number)} with {file_selected}")
             self.usd_filepath_dict[row_number] = file_selected
-            select_button.setIcon(QIcon(str(self.icon_path2)))
+            select_button.setIcon(QIcon(str(self.folder_chosen_icon)))
         else:
-            select_button.setIcon(QIcon(str(self.icon_path))) 
+            select_button.setIcon(QIcon(str(self.open_folder_icon))) 
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
     
