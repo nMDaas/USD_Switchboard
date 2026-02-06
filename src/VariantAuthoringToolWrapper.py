@@ -57,8 +57,8 @@ def showWindow():
     
     ui.setParent(mayaMainWindow)
     ui.setWindowFlags(Qt.Window)
-    ui.setWindowTitle('Shader Plugin')
-    ui.setObjectName('Shader plugin')
+    ui.setWindowTitle('Create Variants From USD Files')
+    ui.setObjectName('Create Variants From USD Files')
     ui.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
 
     global folder_path
@@ -109,7 +109,7 @@ def executeWrapper():
     print(dog1.bark())
     print(dog2.bark())
 
-    #window=showWindow()
+    window=showWindow()
 
 if __name__ == "__main__":
     executeWrapper()
