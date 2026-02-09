@@ -24,6 +24,7 @@ if my_script_dir not in sys.path:
     sys.path.append(my_script_dir)
 
 from VariantAuthoringTool import VariantAuthoringTool
+from UsdFileVariantAuthor import UsdFileVariantAuthor
 
 def one_undo(func):
     """
@@ -86,7 +87,7 @@ def showWindow(tool):
     return ui
 
 def executeWrapper():
-    tool = VariantAuthoringTool("Create Variants From USD Files")
+    tool = UsdFileVariantAuthor("Create Variants From USD Files")
 
     window=showWindow(tool)
 
