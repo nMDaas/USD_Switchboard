@@ -25,6 +25,7 @@ if my_script_dir not in sys.path:
 
 from VariantAuthoringTool import VariantAuthoringTool
 from UsdFileVariantAuthor import UsdFileVariantAuthor
+from TransformVariantAuthor import TransformVariantAuthor
 
 def one_undo(func):
     """
@@ -86,8 +87,13 @@ def showWindow(tool):
     ui.show()
     return ui
 
-def executeWrapper():
+def executeUsdFileVariantAuthor():
     tool = UsdFileVariantAuthor("Create Variants From USD Files")
+
+    window=showWindow(tool)
+
+def executeTransformVariantAuthor():
+    tool = TransformVariantAuthor("Create Transform Variant On Target Prim")
 
     window=showWindow(tool)
 
