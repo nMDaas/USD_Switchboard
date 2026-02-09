@@ -87,7 +87,7 @@
             </widget>
         </widget>
 
-        <widget class="QPushButton" name="apply_button">
+        <widget class="QPushButton" name="final_button">
             <property name="geometry">
                 <rect>
                     <x>30</x>

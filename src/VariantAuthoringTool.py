@@ -46,6 +46,7 @@ class VariantAuthoringTool(ABC):
     
     # UI SETUP -----------------------------------------------------------------------------
 
+    @abstractmethod
     def setupUserInterface(self, ui):
         ui.setWindowTitle(self.getToolName())
         ui.setObjectName(self.getToolName())

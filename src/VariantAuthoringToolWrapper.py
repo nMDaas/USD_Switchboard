@@ -80,7 +80,7 @@ def showWindow(tool):
         tool.createVariantsForSet(ui, vset)
 
     #connect buttons to functions
-    ui.apply_button.clicked.connect(partial(apply))
+    ui.final_button.clicked.connect(partial(apply))
     ui.addVariantButton.clicked.connect(add_variant_row)
      
     # show the QT ui

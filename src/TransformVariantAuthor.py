@@ -36,6 +36,10 @@ class TransformVariantAuthor(VariantAuthoringTool):
 
     # UI FUNCTIONS -------------------------------------------------------------------------
 
+    def setupUserInterface(self, ui):
+        super().setupUserInterface(ui)
+        ui.final_button.setText("Close")
+
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")
         # Now you can find the specific LineEdit for this row:
