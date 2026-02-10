@@ -37,7 +37,10 @@ class TransformVariantAuthor(VariantAuthoringTool):
     # UI FUNCTIONS -------------------------------------------------------------------------
 
     def setupUserInterface(self, ui):
-        super().setupUserInterface(ui)
+        ui.setWindowTitle(self.getToolName())
+        ui.setObjectName(self.getToolName())
+        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+
         ui.final_button.setText("Close")
 
     def open_folder(self, ui, row_number):
@@ -73,46 +76,74 @@ class TransformVariantAuthor(VariantAuthoringTool):
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
         ui.gridLayout.addWidget(setButton, rowIndex, 2)   
 
-        setButton.clicked.connect(lambda checked=False, r=rowIndex: self.showDialogForUSDFileSelection(ui, r))
+        setButton.clicked.connect(lambda checked=False, r=rowIndex: self.setTransformVariant(ui, r))
 
-    # open dialog for user to select USD file - linked to row number
-    def showDialogForUSDFileSelection(self, ui, row_number):
-        # doing something...
+    # set XForm transform as variant for that row - linked to row number
+    def setTransformVariant(self, ui, row_number):
+        # create set
+        variant_set_name = ui.vs_name_input.text()
+        vset = self.createVariantSet(variant_set_name)
 
-        # if successful: 
-            #change pin icon
-        # otherwise
-            # keep pin icon as before
-        pass
+        # create transformation variant for set
+        v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{row_number}")
+        v_name_input = v_name_input_widget.text().strip()
+        self.createATransformationVariantSet(self.targetPrim, vset, v_name_input)
 
-    def createVariantsForSet(self, ui, vset):
-        # Iterate through all num_variants
-        # num_variants = ui.gridLayout.rowCount() - 1
-        for i in range(1, ui.gridLayout.rowCount()):
-            v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
+        self.apply_permanent_order(self.targetPrim)
 
-            # Only make variants for NEW variants (ones that do not have object name pattern of variant_input_x)
-            # This works because when populating existing variants, I didn't give it object names
-            if v_name_input_widget:
-                v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
-                file_selected = self.usd_filepath_dict[i]
-                self.createVariant(vset, v_name_input, file_selected)
+        # if successful, change pinned icon
+        set_button = ui.findChild(QPushButton, f"set_button_{row_number}")
+        set_button.setIcon(QIcon(str(self.pinned_icon)))
 
-        # set default variant as the first variant, only if the variant set is new
-        if self.creatingNewVariant:
-            v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
-            v_name_input_1 = v_name_input_widget_1.text().strip() 
-            vset.SetVariantSelection(v_name_input_1)
+    def createATransformationVariantSet(self, targetPrim, vset, variant_name):
+        # Get the manual overrides currently on the prim
+        recorded_values = {}
+        attrs_to_clear = []
+        
+        for attr in targetPrim.GetAttributes():
+            if attr.IsAuthored() and attr.Get() is not None:
+                attr_name = attr.GetName()
+                recorded_values[attr_name] = attr.Get()
+                attrs_to_clear.append(attr)
 
-    #TODO: warning if file has not been selected
-    def createVariant(self, vset, variant_name, file_selected):
+        # Create/select the new variant and author the values
         vset.AddVariant(variant_name)
-
         vset.SetVariantSelection(variant_name)
 
-        # Go inside the variant and add the file reference
         with vset.GetVariantEditContext():
-            self.targetPrim.GetReferences().AddReference(file_selected)
+            for attr_name, val in recorded_values.items():            
+                attr = targetPrim.GetAttribute(attr_name)
+                attr.Set(val)
+
+        # Clear the top-level overrides so the variant can take over
+        for attr in attrs_to_clear:
+            attr.Clear()
+
+        vset.SetVariantSelection("") 
+            
+        print(f"Recorded variant '{variant_name}' and cleared top-level overrides.")
+
+    def apply_permanent_order(self, targetPrim):
+        attr = targetPrim.GetAttribute("xformOpOrder")
+        if attr.HasValue():
+            print(f"Prim already has attribute")
+            return
         
-        print(f"Variant '{variant_name}' authored with reference to: {file_selected}")
+        else:
+            stage = targetPrim.GetStage()
+            
+            target_layer = stage.GetRootLayer()
+
+            with Usd.EditContext(stage, target_layer):
+                xformable = UsdGeom.Xformable(targetPrim)
+
+                tOp = xformable.AddTranslateOp()
+                rOp = xformable.AddRotateXYZOp()
+                sOp = xformable.AddScaleOp()
+
+                xformable.SetXformOpOrder([tOp, rOp, sOp])
+                
+            print(f"Authored xformOpOrder to layer: {target_layer.identifier}")
+
+    
 

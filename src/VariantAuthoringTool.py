@@ -95,12 +95,3 @@ class VariantAuthoringTool(ABC):
     def createVariantSet(self, in_vset_name):
         vset = self.targetPrim.GetVariantSets().AddVariantSet(in_vset_name)
         return vset
-    
-    #TODO: There should be error checking for if the variant_name already exists for the vset
-    @abstractmethod
-    def createVariant(self, vset, variant_name, file_selected):
-        pass
-
-    @abstractmethod
-    def createVariantsForSet(self, ui, vset):
-        pass

@@ -148,6 +148,7 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
             vset.SetVariantSelection(v_name_input_1)
 
     #TODO: warning if file has not been selected
+    #TODO: There should be error checking for if the variant_name already exists for the vset
     def createVariant(self, vset, variant_name, file_selected):
         vset.AddVariant(variant_name)
 
