@@ -16,6 +16,7 @@ import mayaUsd.ufe
 from pxr import Usd, UsdGeom
 from PySide6.QtCore import QSettings
 from abc import ABC, abstractmethod
+import re
 
 my_script_dir = "/Users/natashadaas/USD_Switchboard/src" 
 if my_script_dir not in sys.path:
@@ -48,7 +49,31 @@ class VariantAuthoringTool(ABC):
 
     @abstractmethod
     def setupUserInterface(self, ui):
+        ui.setWindowTitle(self.getToolName())
+        ui.setObjectName(self.getToolName())
+        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
         pass
+
+    def vs_type_exists_on_prim(self, vs_type):
+        current_val = self.targetPrim.GetAttribute("variant_set_pipeline_tag").Get()
+        return current_val == vs_type
+    
+    def find_authoring_variant_set(self):
+        attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
+        # Get all places where this attribute is authored
+        property_stack = attr.GetPropertyStack()
+        path = str(property_stack[0].path)
+
+        print(path)
+        
+        match = re.search(r"\{([^=]+)=", path)
+        if match:
+            print(match.group(1))
+            vset_name = match.group(1)
+            vsets = self.getVariantSetsOfTargetPrim()
+            variant_set = vsets.GetVariantSet(vset_name)
+            return variant_set
+        return None
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 
@@ -78,8 +103,9 @@ class VariantAuthoringTool(ABC):
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_label, rowIndex, 1)  
 
-    def populateVariantSet(self, ui, vset_name):
-        variants = vset_name.GetVariantNames()
+    def populateExistingVariantSetInUI(self, ui, vset):
+        ui.vs_name_input.setText(vset.GetName())
+        variants = vset.GetVariantNames()
         for v in variants:
             self.add_existing_variant_row(ui, v)
     

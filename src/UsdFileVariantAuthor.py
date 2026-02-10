@@ -13,7 +13,7 @@ import math
 import os
 import ufe
 import mayaUsd.ufe
-from pxr import Usd, UsdGeom
+from pxr import Usd, UsdGeom, Sdf
 from PySide6.QtCore import QSettings
 from abc import ABC, abstractmethod
 
@@ -45,28 +45,13 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
         self.createVariantsForSet(ui, vset)
 
     def setupUserInterface(self, ui):
-        ui.setWindowTitle(self.getToolName())
-        ui.setObjectName(self.getToolName())
-        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+        super().setupUserInterface(ui)
 
-        # Check if the targetPrim already has a variant or not
-        # Either: 
-        # (A) It has a variant set, and we can edit the variant set
-        # or (B) It does not have a variant set and we can create a new one
-        # TODO: Should account for other kinds of variant sets so this might look different later
-        vsets = self.getVariantSetsOfTargetPrim()
-        vset_names = vsets.GetNames()
-        # If variant set already exists on targetPrim 
-        if (len(vset_names) > 0):
+        # Check if the targetPrim already has a variant of this type (usd_file)
+        if self.vs_type_exists_on_prim("usd_file"):
             self.creatingNewVariant = False
-            existing_vs_name = vset_names[0]
-
-            # Set in the UI so the user knows there is already a variant on the targetPrim
-            ui.vs_name_input.setText(existing_vs_name)
-
-            # TODO: this is currently only populating the first one
-            vset = vsets.GetVariantSet(existing_vs_name)
-            self.populateVariantSet(ui, vset)
+            vset = self.find_authoring_variant_set()
+            self.populateExistingVariantSetInUI(ui, vset)
 
         ui.final_button.setText("Create Variants")
         ui.final_button.clicked.connect(partial(self.apply, ui))
@@ -157,6 +142,8 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
         # Go inside the variant and add the file reference
         with vset.GetVariantEditContext():
             self.targetPrim.GetReferences().AddReference(file_selected)
+            attr = self.targetPrim.CreateAttribute("variant_set_pipeline_tag", Sdf.ValueTypeNames.String)
+            attr.Set("usd_file")
         
         print(f"Variant '{variant_name}' authored with reference to: {file_selected}")
 
