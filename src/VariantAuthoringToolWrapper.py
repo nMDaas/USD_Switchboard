@@ -71,16 +71,7 @@ def showWindow(tool):
     def add_variant_row():
         tool.add_variant_row(ui)
 
-    #apply button clicked
-    @one_undo
-    def apply():
-        variant_set_name = ui.vs_name_input.text()
-        vset = tool.createVariantSet(variant_set_name)
-        
-        tool.createVariantsForSet(ui, vset)
-
     #connect buttons to functions
-    ui.final_button.clicked.connect(partial(apply))
     ui.addVariantButton.clicked.connect(add_variant_row)
      
     # show the QT ui

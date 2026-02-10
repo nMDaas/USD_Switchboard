@@ -38,6 +38,12 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
 
     # UI FUNCTIONS -------------------------------------------------------------------------
 
+    def apply(self, ui):
+        variant_set_name = ui.vs_name_input.text()
+        vset = self.createVariantSet(variant_set_name)
+        
+        self.createVariantsForSet(ui, vset)
+
     def setupUserInterface(self, ui):
         ui.setWindowTitle(self.getToolName())
         ui.setObjectName(self.getToolName())
@@ -63,6 +69,7 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
             self.populateVariantSet(ui, vset)
 
         ui.final_button.setText("Create Variants")
+        ui.final_button.clicked.connect(partial(self.apply, ui))
 
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")
