@@ -95,6 +95,9 @@ class TransformVariantAuthor(VariantAuthoringTool):
         set_button = ui.findChild(QPushButton, f"set_button_{row_number}")
         set_button.setIcon(QIcon(str(self.pinned_icon)))
 
+        # set as read only
+        v_name_input_widget.setReadOnly(True)
+
     def createATransformationVariantSet(self, targetPrim, vset, variant_name):
         # Get the manual overrides currently on the prim
         recorded_values = {}
