@@ -48,29 +48,7 @@ class VariantAuthoringTool(ABC):
 
     @abstractmethod
     def setupUserInterface(self, ui):
-        ui.setWindowTitle(self.getToolName())
-        ui.setObjectName(self.getToolName())
-        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
-
-        # Check if the targetPrim already has a variant or not
-        # Either: 
-        # (A) It has a variant set, and we can edit the variant set
-        # or (B) It does not have a variant set and we can create a new one
-        # TODO: Should account for other kinds of variant sets so this might look different later
-        vsets = self.getVariantSetsOfTargetPrim()
-        vset_names = vsets.GetNames()
-        # If variant set already exists on targetPrim 
-        if (len(vset_names) > 0):
-            self.creatingNewVariant = False
-            existing_vs_name = vset_names[0]
-
-            # Set in the UI so the user knows there is already a variant on the targetPrim
-            ui.vs_name_input.setText(existing_vs_name)
-
-            # TODO: this is currently only populating the first one
-            vset = vsets.GetVariantSet(existing_vs_name)
-            self.populateVariantSet(ui, vset)
-
+        pass
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 
