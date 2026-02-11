@@ -56,13 +56,15 @@ class TransformVariantAuthor(VariantAuthoringTool):
 
     def setupUserInterface_ExistingVariant(self, ui):
         # Check if the targetPrim already has a variant of this type (transform)
-        exists, vset = self.find_authoring_variant_set("transform")
+        exists, existing_vsets = self.find_authoring_variant_sets("transform")
         if exists:
             self.creatingNewVariant = False
-            self.populateExistingVariantSetInUI(ui, vset)
+            self.populateExistingVariantSetInUI(ui, existing_vsets)
 
     def setupUserInterface_NewVariant(self, ui):
         self.resetUI(ui)
+        widget = ui.findChild(QComboBox, "vs_name_dropdown")
+        widget.hide() 
 
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")

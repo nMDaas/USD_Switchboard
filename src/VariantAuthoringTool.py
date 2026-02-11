@@ -54,10 +54,12 @@ class VariantAuthoringTool(ABC):
         ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
         pass
     
-    def find_authoring_variant_set(self, targetValue):
+    def find_authoring_variant_sets(self, targetValue):
         attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
         # Get all places where this attribute is authored
         property_stack = attr.GetPropertyStack()
+
+        existing_vsets = [] # where variant_set_pipeline_tag = targetValue
 
         for p in property_stack:
             path = str(p.path)
@@ -70,9 +72,12 @@ class VariantAuthoringTool(ABC):
                     vset_name = match.group(1)
                     vsets = self.getVariantSetsOfTargetPrim()
                     variant_set = vsets.GetVariantSet(vset_name)
-                    return True, variant_set
-                
-        return False, None
+                    existing_vsets.append(variant_set)
+
+        if (len(existing_vsets) > 0):
+            return True, existing_vsets
+        else:             
+            return False, None
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 
@@ -102,21 +107,28 @@ class VariantAuthoringTool(ABC):
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_label, rowIndex, 1)  
 
-    def populateExistingVariantSetInUI(self, ui, vset):
-        ui.vs_name_input.setText(vset.GetName())
-        variants = vset.GetVariantNames()
+    def populateExistingVariantSetInUI(self, ui, vsets):
+        vs_name_dropdown = QComboBox()
+        for i in range(len(vsets)):
+            vs_name_dropdown.addItem(vsets[i].GetName())
+
+        ui.gridLayout_vs_options.addWidget(vs_name_dropdown, 0, 2)
+        vs_name_dropdown.setObjectName("vs_name_dropdown")
+
+        ui.vs_name_input.setText(vsets[0].GetName())
+        variants = vsets[0].GetVariantNames()
         for v in variants:
             self.add_existing_variant_row(ui, v)
 
     def resetUI(self, ui):
         ui.vs_name_input.setText("")
-        count = 1
-        while (ui.gridLayout.rowCount() > 1):
-            item = ui.gridLayout.itemAt(count)
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)  # removes from UI
-                widget.deleteLater()
+        for i in reversed(range(1, ui.gridLayout.count())):
+            item = ui.gridLayout.itemAt(i)
+            if item:
+                widget = item.widget()
+                if widget:
+                    widget.setParent(None)
+                    widget.deleteLater()
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
 
