@@ -48,9 +48,9 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
         super().setupUserInterface(ui)
 
         # Check if the targetPrim already has a variant of this type (usd_file)
-        if self.vs_type_exists_on_prim("usd_file"):
+        exists, vset = self.find_authoring_variant_set("usd_file")
+        if exists:
             self.creatingNewVariant = False
-            vset = self.find_authoring_variant_set()
             self.populateExistingVariantSetInUI(ui, vset)
 
         ui.final_button.setText("Create Variants")

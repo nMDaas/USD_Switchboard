@@ -53,27 +53,26 @@ class VariantAuthoringTool(ABC):
         ui.setObjectName(self.getToolName())
         ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
         pass
-
-    def vs_type_exists_on_prim(self, vs_type):
-        current_val = self.targetPrim.GetAttribute("variant_set_pipeline_tag").Get()
-        return current_val == vs_type
     
-    def find_authoring_variant_set(self):
+    def find_authoring_variant_set(self, targetValue):
         attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
         # Get all places where this attribute is authored
         property_stack = attr.GetPropertyStack()
-        path = str(property_stack[0].path)
 
-        print(path)
-        
-        match = re.search(r"\{([^=]+)=", path)
-        if match:
-            print(match.group(1))
-            vset_name = match.group(1)
-            vsets = self.getVariantSetsOfTargetPrim()
-            variant_set = vsets.GetVariantSet(vset_name)
-            return variant_set
-        return None
+        for p in property_stack:
+            path = str(p.path)
+            value = p.default
+            
+            if (value == targetValue):
+                match = re.search(r"\{([^=]+)=", path)
+                if match:
+                    print(match.group(1))
+                    vset_name = match.group(1)
+                    vsets = self.getVariantSetsOfTargetPrim()
+                    variant_set = vsets.GetVariantSet(vset_name)
+                    return True, variant_set
+                
+        return False, None
     
     # UI FUNCTIONS -------------------------------------------------------------------------
 

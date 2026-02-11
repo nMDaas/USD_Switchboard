@@ -13,7 +13,7 @@ import math
 import os
 import ufe
 import mayaUsd.ufe
-from pxr import Usd, UsdGeom
+from pxr import Usd, UsdGeom, Sdf
 from PySide6.QtCore import QSettings
 from abc import ABC, abstractmethod
 
@@ -37,9 +37,13 @@ class TransformVariantAuthor(VariantAuthoringTool):
     # UI FUNCTIONS -------------------------------------------------------------------------
 
     def setupUserInterface(self, ui):
-        ui.setWindowTitle(self.getToolName())
-        ui.setObjectName(self.getToolName())
-        ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+        super().setupUserInterface(ui)
+
+        # Check if the targetPrim already has a variant of this type (transform)
+        exists, vset = self.find_authoring_variant_set("transform")
+        if exists:
+            self.creatingNewVariant = False
+            self.populateExistingVariantSetInUI(ui, vset)
 
         ui.final_button.setText("Close")
 
@@ -90,6 +94,7 @@ class TransformVariantAuthor(VariantAuthoringTool):
         self.createATransformationVariantSet(self.targetPrim, vset, v_name_input)
 
         self.apply_permanent_order(self.targetPrim)
+        self.apply_pipeline_tag(self.targetPrim, variant_set_name)
 
         # if successful, change pinned icon
         set_button = ui.findChild(QPushButton, f"set_button_{row_number}")
@@ -117,7 +122,6 @@ class TransformVariantAuthor(VariantAuthoringTool):
             for attr_name, val in recorded_values.items():            
                 attr = targetPrim.GetAttribute(attr_name)
                 attr.Set(val)
-
         # Clear the top-level overrides so the variant can take over
         for attr in attrs_to_clear:
             attr.Clear()
@@ -147,6 +151,22 @@ class TransformVariantAuthor(VariantAuthoringTool):
                 xformable.SetXformOpOrder([tOp, rOp, sOp])
                 
             print(f"Authored xformOpOrder to layer: {target_layer.identifier}")
+
+    def apply_pipeline_tag(self, targetPrim, variant_set_name):
+        vset = targetPrim.GetVariantSet(variant_set_name)
+        attr = targetPrim.GetAttribute("variant_set_pipeline_tag")
+        variant_names = vset.GetVariantNames()
+
+        stage = targetPrim.GetStage()
+        target_layer = stage.GetRootLayer()
+
+        for var_name in variant_names:
+            vset.SetVariantSelection(var_name)
+
+            with vset.GetVariantEditContext(target_layer):
+                attr = targetPrim.GetAttribute("variant_set_pipeline_tag")
+                attr.Set("transform")
+            
 
     
 
