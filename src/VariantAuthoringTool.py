@@ -105,7 +105,15 @@ class VariantAuthoringTool(ABC):
 
         # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
-        ui.gridLayout.addWidget(variant_name_label, rowIndex, 1)  
+        ui.gridLayout.addWidget(variant_name_label, rowIndex, 1) 
+
+    def handle_vs_selection_change(self, ui, vset_selection_name):
+        self.resetUI(ui)
+        vset_selection = self.targetPrim.GetVariantSet(vset_selection_name)
+        ui.vs_name_input.setText(vset_selection_name)
+        variants = vset_selection.GetVariantNames()
+        for v in variants:
+            self.add_existing_variant_row(ui, v)
 
     def populateExistingVariantSetInUI(self, ui, vsets):
         vs_name_dropdown = QComboBox()
@@ -115,10 +123,11 @@ class VariantAuthoringTool(ABC):
         ui.gridLayout_vs_options.addWidget(vs_name_dropdown, 0, 2)
         vs_name_dropdown.setObjectName("vs_name_dropdown")
 
-        ui.vs_name_input.setText(vsets[0].GetName())
-        variants = vsets[0].GetVariantNames()
-        for v in variants:
-            self.add_existing_variant_row(ui, v)
+        vs_name_dropdown.currentTextChanged.connect(
+            lambda text: self.handle_vs_selection_change(ui, text)
+        )
+
+        self.handle_vs_selection_change(ui, vsets[0].GetName())
 
     def resetUI(self, ui):
         ui.vs_name_input.setText("")
