@@ -107,6 +107,16 @@ class VariantAuthoringTool(ABC):
         variants = vset.GetVariantNames()
         for v in variants:
             self.add_existing_variant_row(ui, v)
+
+    def resetUI(self, ui):
+        ui.vs_name_input.setText("")
+        count = 1
+        while (ui.gridLayout.rowCount() > 1):
+            item = ui.gridLayout.itemAt(count)
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)  # removes from UI
+                widget.deleteLater()
     
     # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
 

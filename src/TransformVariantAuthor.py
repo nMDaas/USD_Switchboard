@@ -39,13 +39,30 @@ class TransformVariantAuthor(VariantAuthoringTool):
     def setupUserInterface(self, ui):
         super().setupUserInterface(ui)
 
+        # add radio buttons
+        existingVariantOptionButton = QRadioButton("Edit Existing Variant")
+        newVariantOptionButton = QRadioButton("Create New Variant")
+        ui.gridLayout_vs_options.addWidget(newVariantOptionButton, 0, 0)
+        ui.gridLayout_vs_options.addWidget(existingVariantOptionButton, 0, 1)  
+        existingVariantOptionButton.setEnabled(True)
+        newVariantOptionButton.setEnabled(True)
+        newVariantOptionButton.setChecked(True)
+        
+
+        existingVariantOptionButton.clicked.connect(partial(self.setupUserInterface_ExistingVariant, ui))
+        newVariantOptionButton.clicked.connect(partial(self.setupUserInterface_NewVariant, ui))
+
+        ui.final_button.setText("Close")
+
+    def setupUserInterface_ExistingVariant(self, ui):
         # Check if the targetPrim already has a variant of this type (transform)
         exists, vset = self.find_authoring_variant_set("transform")
         if exists:
             self.creatingNewVariant = False
             self.populateExistingVariantSetInUI(ui, vset)
 
-        ui.final_button.setText("Close")
+    def setupUserInterface_NewVariant(self, ui):
+        self.resetUI(ui)
 
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")
