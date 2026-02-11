@@ -93,8 +93,8 @@ class TransformVariantAuthor(VariantAuthoringTool):
         v_name_input = v_name_input_widget.text().strip()
         self.createATransformationVariantSet(self.targetPrim, vset, v_name_input)
 
-        self.apply_permanent_order(self.targetPrim)
-        self.apply_pipeline_tag(self.targetPrim, variant_set_name)
+        self.apply_permanent_order()
+        self.apply_pipeline_tag(variant_set_name)
 
         # if successful, change pinned icon
         set_button = ui.findChild(QPushButton, f"set_button_{row_number}")
@@ -121,7 +121,8 @@ class TransformVariantAuthor(VariantAuthoringTool):
         with vset.GetVariantEditContext():
             for attr_name, val in recorded_values.items():            
                 attr = targetPrim.GetAttribute(attr_name)
-                attr.Set(val)
+                if (attr):
+                    attr.Set(val)
         # Clear the top-level overrides so the variant can take over
         for attr in attrs_to_clear:
             attr.Clear()
@@ -130,19 +131,19 @@ class TransformVariantAuthor(VariantAuthoringTool):
             
         print(f"Recorded variant '{variant_name}' and cleared top-level overrides.")
 
-    def apply_permanent_order(self, targetPrim):
-        attr = targetPrim.GetAttribute("xformOpOrder")
+    def apply_permanent_order(self):
+        attr = self.targetPrim.GetAttribute("xformOpOrder")
         if attr.HasValue():
             print(f"Prim already has attribute")
             return
         
         else:
-            stage = targetPrim.GetStage()
+            stage = self.targetPrim.GetStage()
             
             target_layer = stage.GetRootLayer()
 
             with Usd.EditContext(stage, target_layer):
-                xformable = UsdGeom.Xformable(targetPrim)
+                xformable = UsdGeom.Xformable(self.targetPrim)
 
                 tOp = xformable.AddTranslateOp()
                 rOp = xformable.AddRotateXYZOp()
@@ -152,20 +153,25 @@ class TransformVariantAuthor(VariantAuthoringTool):
                 
             print(f"Authored xformOpOrder to layer: {target_layer.identifier}")
 
-    def apply_pipeline_tag(self, targetPrim, variant_set_name):
-        vset = targetPrim.GetVariantSet(variant_set_name)
-        attr = targetPrim.GetAttribute("variant_set_pipeline_tag")
+    def apply_pipeline_tag(self, variant_set_name):
+        vset = self.targetPrim.GetVariantSet(variant_set_name)
+        attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
         variant_names = vset.GetVariantNames()
 
-        stage = targetPrim.GetStage()
+        stage = self.targetPrim.GetStage()
         target_layer = stage.GetRootLayer()
 
         for var_name in variant_names:
             vset.SetVariantSelection(var_name)
 
             with vset.GetVariantEditContext(target_layer):
-                attr = targetPrim.GetAttribute("variant_set_pipeline_tag")
-                attr.Set("transform")
+                attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
+
+                if (attr):
+                    attr.Set("transform")
+                else:
+                    attr = self.targetPrim.CreateAttribute("variant_set_pipeline_tag", Sdf.ValueTypeNames.String)
+                    attr.Set("transform")    
             
 
     
