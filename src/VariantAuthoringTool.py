@@ -31,11 +31,16 @@ class VariantAuthoringTool(ABC):
     def __init__(self, _tool_name):
         self.tool_name = _tool_name
         self.targetPrim = get_selected_usd_xform_prim() # set targetPrim - the XForm that will have the variant
+        self.proxy_shape_path = "|stage1|stageShape1"
+        self.stage = mayaUsd.ufe.getStage(self.proxy_shape_path)
         
         self.creatingNewVariant = True # keeps track of whether we are creating a new variant or not
 
         # Set 
         self.settings = QSettings("USD_Switchboard", "VariantAuthoringTool")
+
+        # icon paths
+        self.remove_icon  = Path(__file__).parent / "icons" / "remove.png"
 
     # GETTERS ------------------------------------------------------------------------------
 
@@ -95,17 +100,52 @@ class VariantAuthoringTool(ABC):
     def add_existing_variant_row(self, ui, v_name):
         label = QLabel(f"Variant: ")
         variant_name_label = QLineEdit()
+        removeButton = QPushButton()
 
         # Set name of variant name and as read only
         variant_name_label.setText(v_name)
         variant_name_label.setReadOnly(True)
+
+        # Setting removeButton settings
+        removeButton.setIcon(QIcon(str(self.remove_icon)))
+        removeButton.setIconSize(QSize(22,22))
+        removeButton.setFlat(True)
         
         # Get new row index
         rowIndex = ui.gridLayout.rowCount()
 
+        # set object names
+        variant_name_label.setObjectName(f"variant_label_{rowIndex}")
+
         # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_label, rowIndex, 1) 
+        ui.gridLayout.addWidget(removeButton, rowIndex, 2) 
+
+        # Connect buttons
+        removeButton.clicked.connect(lambda checked=False, r=rowIndex: self.removeVariantFromSet(ui, r))
+
+    def removeVariantFromSet(self, ui, row_number):
+        # Get variant set
+        vs_name = ui.vs_name_input.text()
+        variantSet = self.targetPrim.GetVariantSets().GetVariantSet(vs_name)
+
+        # Get variant to delete
+        v_name_input_widget = ui.findChild(QLineEdit, f"variant_label_{row_number}")
+        v_name = v_name_input_widget.text().strip()
+
+        targetPrim_path = self.targetPrim.GetPath()
+
+        for layer in self.stage.GetLayerStack():
+            prim_spec = layer.GetPrimAtPath(targetPrim_path)
+            if prim_spec and vs_name in prim_spec.variantSets:
+                vset_spec = prim_spec.variantSets[vs_name]
+                
+                if v_name in vset_spec.variants:
+                    vset_spec.RemoveVariant(vset_spec.variants[v_name])
+                    print(f"Successfully deleted '{v_name}' from layer: {layer.identifier}")
+
+        self.handle_vs_selection_change(ui, vs_name)
 
     def handle_vs_selection_change(self, ui, vset_selection_name):
         self.resetUI(ui)
