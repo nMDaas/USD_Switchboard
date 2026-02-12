@@ -83,21 +83,13 @@ class TransformVariantAuthor(VariantAuthoringTool):
         if (remove_widget):
             remove_widget.hide() 
 
-
-    def open_folder(self, ui, row_number):
-        print(f"Opening folder for row: {row_number}")
-        # Now you can find the specific LineEdit for this row:
-        line_edit = ui.findChild(QLineEdit, f"variant_input_{row_number}")
-        if line_edit:
-            print(f"Current text is: {line_edit.text()}")
-
     def add_variant_row(self, ui):
         # Create widgets
         label = QLabel(f"Variant: ")
         variant_name_line_edit = QLineEdit()
         setButton = QPushButton()
 
-        # Setting folderButton settings
+        # Setting setButton settings
         setButton.setIcon(QIcon(str(self.pin_icon)))
         setButton.setIconSize(QSize(22,22))
         setButton.setFlat(True)

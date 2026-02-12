@@ -13,7 +13,7 @@ import math
 import os
 import ufe
 import mayaUsd.ufe
-from pxr import Usd, UsdGeom, Sdf
+from pxr import Usd, UsdGeom, Gf, UsdShade, Sdf
 from PySide6.QtCore import QSettings
 from abc import ABC, abstractmethod
 
@@ -33,16 +33,12 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         self.usd_filepath_dict = {} # stores [row, filepath]
 
         # icon paths
-        self.open_folder_icon = Path(__file__).parent / "icons" / "open-folder.png"
-        self.folder_chosen_icon  = Path(__file__).parent / "icons" / "open-folder-confirmed.png"
+        self.pin_icon = Path(__file__).parent / "icons" / "pin.png"
+        self.pinned_icon  = Path(__file__).parent / "icons" / "pin-confirmed.png"
 
     # UI FUNCTIONS -------------------------------------------------------------------------
 
-    def apply(self, ui):
-        variant_set_name = ui.vs_name_input.text()
-        vset = self.createVariantSet(variant_set_name)
-        
-        self.createVariantsForSet(ui, vset)
+    def close(self, ui):
         ui.close()
 
     def setupUserInterface(self, ui):
@@ -60,7 +56,7 @@ class MaterialVariantAuthor(VariantAuthoringTool):
             remove_widget.hide() 
 
         ui.final_button.setText("Create Variants")
-        ui.final_button.clicked.connect(partial(self.apply, ui))
+        ui.final_button.clicked.connect(partial(self.close, ui))
 
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")
@@ -73,12 +69,12 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         # Create widgets
         label = QLabel(f"Variant: ")
         variant_name_line_edit = QLineEdit()
-        folderButton = QPushButton()
+        setButton = QPushButton()
 
         # Setting folderButton settings
-        folderButton.setIcon(QIcon(str(self.open_folder_icon)))
-        folderButton.setIconSize(QSize(22,22))
-        folderButton.setFlat(True)
+        setButton.setIcon(QIcon(str(self.pin_icon)))
+        setButton.setIconSize(QSize(22,22))
+        setButton.setFlat(True)
 
         # Get new row index
         rowIndex = ui.gridLayout.rowCount()
@@ -88,68 +84,62 @@ class MaterialVariantAuthor(VariantAuthoringTool):
 
         # Setting object names
         variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
-        folderButton.setObjectName(f"select_button_{rowIndex}")
+        setButton.setObjectName(f"select_button_{rowIndex}")
 
         # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
         ui.gridLayout.addWidget(variant_name_line_edit, rowIndex, 1)    
-        ui.gridLayout.addWidget(folderButton, rowIndex, 2)   
+        ui.gridLayout.addWidget(setButton, rowIndex, 2)   
 
-        folderButton.clicked.connect(lambda checked=False, r=rowIndex: self.showDialogForUSDFileSelection(ui, r))
+        setButton.clicked.connect(lambda checked=False, r=rowIndex: self.setMaterialVariantSet(ui, r))
 
-    # open dialog for user to select USD file - linked to row number
-    def showDialogForUSDFileSelection(self, ui, row_number):
-        if self.settings.value("defaultDirectory") is None:
-            self.settings.setValue("defaultDirectory",  cmds.workspace(query=True, rootDirectory=True))
+    # set XForm material variant for that row - linked to row number
+    def setMaterialVariantSet(self, ui, row_number):
+        # create set
+        variant_set_name = ui.vs_name_input.text()
+        vset = self.createVariantSet(variant_set_name)
+        material_path = self.get_material_path()
 
-        initial_directory =  self.settings.value("defaultDirectory")
-        select_button = ui.findChild(QPushButton, f"select_button_{row_number}")
+        # create transformation variant for set
+        v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{row_number}")
+        v_name_input = v_name_input_widget.text().strip()
+        self.createAMaterialVariant(vset, v_name_input, material_path)
 
-        dialog = QFileDialog()
-        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        dialog.setDirectory(initial_directory)
-        dialog.setWindowTitle("Select USD File")
+        self.reset_binding()
 
-        # show which filename was selected if a folder was selected
-        if dialog.exec_():
-            file_selected = dialog.selectedFiles()[0]
-            self.settings.setValue("defaultDirectory",  str(Path(file_selected).parent))
-            self.usd_filepath_dict[row_number] = file_selected
-            select_button.setIcon(QIcon(str(self.folder_chosen_icon)))
-        else:
-            select_button.setIcon(QIcon(str(self.open_folder_icon))) 
-
-    def createVariantsForSet(self, ui, vset):
-        # Iterate through all num_variants
-        # num_variants = ui.gridLayout.rowCount() - 1
-        for i in range(1, ui.gridLayout.rowCount()):
-            v_name_input_widget = ui.findChild(QLineEdit, f"variant_input_{i}")
-
-            # Only make variants for NEW variants (ones that do not have object name pattern of variant_input_x)
-            # This works because when populating existing variants, I didn't give it object names
-            if v_name_input_widget:
-                v_name_input = v_name_input_widget.text().strip() # strip white spaces just in case
-                file_selected = self.usd_filepath_dict[i]
-                self.createVariant(vset, v_name_input, file_selected)
-
-        # set default variant as the first variant, only if the variant set is new
-        if self.creatingNewVariant:
-            v_name_input_widget_1 = ui.findChild(QLineEdit, f"variant_input_1")
-            v_name_input_1 = v_name_input_widget_1.text().strip() 
-            vset.SetVariantSelection(v_name_input_1)
-
-    #TODO: warning if file has not been selected
-    #TODO: There should be error checking for if the variant_name already exists for the vset
-    def createVariant(self, vset, variant_name, file_selected):
-        vset.AddVariant(variant_name)
-
-        vset.SetVariantSelection(variant_name)
-
-        # Go inside the variant and add the file reference
-        with vset.GetVariantEditContext():
-            self.targetPrim.GetReferences().AddReference(file_selected)
-            attr = self.targetPrim.CreateAttribute("variant_set_pipeline_tag", Sdf.ValueTypeNames.String)
-            attr.Set("usd_file")
+    def get_material_path(self):
+        binding_api = UsdShade.MaterialBindingAPI(self.targetPrim)
         
-        print(f"Variant '{variant_name}' authored with reference to: {file_selected}")
+        material, relationship = binding_api.ComputeBoundMaterial()
+        
+        if material:
+            return material.GetPath() # returns something similar to '/mtl/UsdPreviewSurface1'
+        else:
+            return "No material bound to this Prim."
+
+
+    def createAMaterialVariant(self, vset, variant_name, material_path):
+        # Create/select the new variant and author the values
+        vset.AddVariant(variant_name)
+        vset.SetVariantSelection(variant_name)
+        
+        proxy_shape_path = "|stage1|stageShape1"
+        stage = mayaUsd.ufe.getStage(proxy_shape_path)
+
+        with vset.GetVariantEditContext():
+            binding_api = UsdShade.MaterialBindingAPI.Apply(self.targetPrim)
+            material_path = Sdf.Path(material_path)
+            
+            # Create the relationship pointing to your material
+            binding_api.Bind(UsdShade.Material.Get(stage, material_path))
+
+    def reset_binding(self):
+        rel = self.targetPrim.GetRelationship("material:binding")
+        
+        if rel:
+            if rel.HasAuthoredTargets():
+                print("Clearing materal:binding relationships...")
+                rel.ClearTargets(True) 
+            else:
+                print("Relationship exists but is already empty.")
 
