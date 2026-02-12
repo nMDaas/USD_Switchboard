@@ -165,7 +165,7 @@ class VariantAuthoringTool(ABC):
                     widget.setParent(None)
                     widget.deleteLater()
     
-    # USD VARIANT SPECIFIC FUNCTIONS -------------------------------------------------------
+    # VARIANT AUTHORING SPECIFIC FUNCTIONS -------------------------------------------------------
 
     # Get number variant sets for XForm
     # TODO: Warning if XForm not selected

@@ -111,6 +111,8 @@ class TransformVariantAuthor(VariantAuthoringTool):
 
         setButton.clicked.connect(lambda checked=False, r=rowIndex: self.setTransformVariant(ui, r))
 
+    # VARIANT AUTHORING SPECIFIC FUNCTIONS -------------------------------------------------------
+
     # set XForm transform as variant for that row - linked to row number
     def setTransformVariant(self, ui, row_number):
         # create set
