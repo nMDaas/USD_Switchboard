@@ -41,17 +41,18 @@ class TransformVariantAuthor(VariantAuthoringTool):
         super().setupUserInterface(ui)
 
         # add radio buttons
-        existingVariantOptionButton = QRadioButton("Edit Existing Variant")
+        exists, existing_vsets = self.find_authoring_variant_sets("transform")
         newVariantOptionButton = QRadioButton("Create New Variant")
         ui.gridLayout_vs_options.addWidget(newVariantOptionButton, 0, 0)
-        ui.gridLayout_vs_options.addWidget(existingVariantOptionButton, 0, 1)  
-        existingVariantOptionButton.setEnabled(True)
         newVariantOptionButton.setEnabled(True)
         newVariantOptionButton.setChecked(True)
-
-        existingVariantOptionButton.clicked.connect(partial(self.setupUserInterface_ExistingVariant, ui))
         newVariantOptionButton.clicked.connect(partial(self.setupUserInterface_NewVariant, ui))
-
+        if exists: # only if existing variant sets of type "transform" on targetPrim
+            existingVariantOptionButton = QRadioButton("Edit Existing Variant")
+            ui.gridLayout_vs_options.addWidget(existingVariantOptionButton, 0, 1)  
+            existingVariantOptionButton.setEnabled(True)
+            existingVariantOptionButton.clicked.connect(partial(self.setupUserInterface_ExistingVariant, ui))
+       
         remove_widget = ui.findChild(QPushButton, "vs_remove")
         if (remove_widget):
             remove_widget.hide() 
