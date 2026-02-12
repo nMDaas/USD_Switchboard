@@ -13,7 +13,7 @@ import math
 import os
 import ufe
 import mayaUsd.ufe
-from pxr import Usd, UsdGeom
+from pxr import Usd, UsdGeom, Sdf
 from PySide6.QtCore import QSettings
 from abc import ABC, abstractmethod
 import re
@@ -57,6 +57,13 @@ class VariantAuthoringTool(ABC):
         ui.setWindowTitle(self.getToolName())
         ui.setObjectName(self.getToolName())
         ui.targetPrim.setText(f"Target Prim: {self.getTargetPrimPath()}")
+
+        # Set the icon for the variant set remove button
+        ui.vs_remove.setIcon(QIcon(str(self.remove_icon)))
+        ui.vs_remove.setIconSize(QSize(22,22))
+        ui.vs_remove.setFlat(True)
+        ui.vs_remove.clicked.connect(lambda checked=False: self.deleteVariant(ui))
+
         pass
     
     def find_authoring_variant_sets(self, targetValue):
@@ -125,28 +132,6 @@ class VariantAuthoringTool(ABC):
         # Connect buttons
         removeButton.clicked.connect(lambda checked=False, r=rowIndex: self.removeVariantFromSet(ui, r))
 
-    def removeVariantFromSet(self, ui, row_number):
-        # Get variant set
-        vs_name = ui.vs_name_input.text()
-        variantSet = self.targetPrim.GetVariantSets().GetVariantSet(vs_name)
-
-        # Get variant to delete
-        v_name_input_widget = ui.findChild(QLineEdit, f"variant_label_{row_number}")
-        v_name = v_name_input_widget.text().strip()
-
-        targetPrim_path = self.targetPrim.GetPath()
-
-        for layer in self.stage.GetLayerStack():
-            prim_spec = layer.GetPrimAtPath(targetPrim_path)
-            if prim_spec and vs_name in prim_spec.variantSets:
-                vset_spec = prim_spec.variantSets[vs_name]
-                
-                if v_name in vset_spec.variants:
-                    vset_spec.RemoveVariant(vset_spec.variants[v_name])
-                    print(f"Successfully deleted '{v_name}' from layer: {layer.identifier}")
-
-        self.handle_vs_selection_change(ui, vs_name)
-
     def handle_vs_selection_change(self, ui, vset_selection_name):
         self.resetUI(ui)
         vset_selection = self.targetPrim.GetVariantSet(vset_selection_name)
@@ -187,7 +172,54 @@ class VariantAuthoringTool(ABC):
         vsets = self.targetPrim.GetVariantSets()
         return vsets
     
+    def removeVariantFromSet(self, ui, row_number):
+        # Get variant set
+        vs_name = ui.vs_name_input.text()
+
+        # Get variant to delete
+        v_name_input_widget = ui.findChild(QLineEdit, f"variant_label_{row_number}")
+        v_name = v_name_input_widget.text().strip()
+
+        targetPrim_path = self.targetPrim.GetPath()
+
+        for layer in self.stage.GetLayerStack():
+            prim_spec = layer.GetPrimAtPath(targetPrim_path)
+            if prim_spec and vs_name in prim_spec.variantSets:
+                vset_spec = prim_spec.variantSets[vs_name]
+                
+                if v_name in vset_spec.variants:
+                    vset_spec.RemoveVariant(vset_spec.variants[v_name])
+                    print(f"Successfully deleted '{v_name}' from layer: {layer.identifier}")
+
+        self.handle_vs_selection_change(ui, vs_name)
+    
     # Creates a variant set of a given name for a given XForm
     def createVariantSet(self, in_vset_name):
         vset = self.targetPrim.GetVariantSets().AddVariantSet(in_vset_name)
         return vset
+    
+    def deleteVariant(self, ui):
+        # Get variant set
+        vs_name = ui.vs_name_input.text()
+        targetPrim_path = self.targetPrim.GetPath()
+
+        layer = self.stage.GetRootLayer()
+        self.stage.SetEditTarget(Usd.EditTarget(layer))
+
+        prim_spec = self.stage.GetRootLayer().GetPrimAtPath(targetPrim_path)
+
+        if prim_spec and vs_name in prim_spec.variantSets:
+            # 4. Use the Python del keyword to remove the variant set from the prim spec's variantSets
+            del prim_spec.variantSets[vs_name]
+            
+            vset_names = prim_spec.variantSetNameList
+            if vs_name in vset_names.prependedItems:
+                vset_names.prependedItems.remove(vs_name)
+            if vs_name in vset_names.appendedItems:
+                vset_names.appendedItems.remove(vs_name)
+            if vs_name in vset_names.explicitItems:
+                vset_names.explicitItems.remove(vs_name)
+                
+            print(f"Completely scrubbed variant set: {vs_name}")
+
+

@@ -3,6 +3,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtUiTools import *
 from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QPushButton
 from functools import partial
 import maya.cmds as cmds
 from maya import OpenMayaUI
@@ -47,10 +48,13 @@ class TransformVariantAuthor(VariantAuthoringTool):
         existingVariantOptionButton.setEnabled(True)
         newVariantOptionButton.setEnabled(True)
         newVariantOptionButton.setChecked(True)
-        
 
         existingVariantOptionButton.clicked.connect(partial(self.setupUserInterface_ExistingVariant, ui))
         newVariantOptionButton.clicked.connect(partial(self.setupUserInterface_NewVariant, ui))
+
+        remove_widget = ui.findChild(QPushButton, "vs_remove")
+        if (remove_widget):
+            remove_widget.hide() 
 
         ui.final_button.setText("Close")
 
@@ -61,10 +65,19 @@ class TransformVariantAuthor(VariantAuthoringTool):
             self.creatingNewVariant = False
             self.populateExistingVariantSetInUI(ui, existing_vsets)
 
+        remove_widget = ui.findChild(QPushButton, "vs_remove")
+        if (remove_widget):
+            remove_widget.show() 
+
     def setupUserInterface_NewVariant(self, ui):
         self.resetUI(ui)
         widget = ui.findChild(QComboBox, "vs_name_dropdown")
         widget.hide() 
+
+        remove_widget = ui.findChild(QPushButton, "vs_remove")
+        if (remove_widget):
+            remove_widget.hide() 
+
 
     def open_folder(self, ui, row_number):
         print(f"Opening folder for row: {row_number}")
