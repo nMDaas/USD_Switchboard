@@ -26,6 +26,7 @@ if my_script_dir not in sys.path:
 from VariantAuthoringTool import VariantAuthoringTool
 from UsdFileVariantAuthor import UsdFileVariantAuthor
 from TransformVariantAuthor import TransformVariantAuthor
+from MaterialVariantAuthor import MaterialVariantAuthor
 
 def one_undo(func):
     """
@@ -85,6 +86,11 @@ def executeUsdFileVariantAuthor():
 
 def executeTransformVariantAuthor():
     tool = TransformVariantAuthor("Create Transform Variant On Target Prim")
+
+    window=showWindow(tool)
+
+def executeMaterialVariantAuthor():
+    tool = MaterialVariantAuthor("Create Material Variants On Target Prim")
 
     window=showWindow(tool)
 
