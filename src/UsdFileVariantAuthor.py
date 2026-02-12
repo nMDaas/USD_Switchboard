@@ -43,6 +43,7 @@ class UsdFileVariantAuthor(VariantAuthoringTool):
         vset = self.createVariantSet(variant_set_name)
         
         self.createVariantsForSet(ui, vset)
+        ui.close()
 
     def setupUserInterface(self, ui):
         super().setupUserInterface(ui)

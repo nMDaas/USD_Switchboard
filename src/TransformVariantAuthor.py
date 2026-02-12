@@ -37,6 +37,9 @@ class TransformVariantAuthor(VariantAuthoringTool):
 
     # UI FUNCTIONS -------------------------------------------------------------------------
 
+    def close(self, ui):
+        ui.close()
+
     def setupUserInterface(self, ui):
         super().setupUserInterface(ui)
 
@@ -58,6 +61,7 @@ class TransformVariantAuthor(VariantAuthoringTool):
             remove_widget.hide() 
 
         ui.final_button.setText("Close")
+        ui.final_button.clicked.connect(partial(self.close, ui))
 
     def setupUserInterface_ExistingVariant(self, ui):
         # Check if the targetPrim already has a variant of this type (transform)
