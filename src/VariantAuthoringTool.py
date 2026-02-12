@@ -136,6 +136,7 @@ class VariantAuthoringTool(ABC):
         self.resetUI(ui)
         vset_selection = self.targetPrim.GetVariantSet(vset_selection_name)
         ui.vs_name_input.setText(vset_selection_name)
+        ui.vs_name_input.setReadOnly(True)
         variants = vset_selection.GetVariantNames()
         for v in variants:
             self.add_existing_variant_row(ui, v)
