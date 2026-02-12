@@ -45,7 +45,7 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         super().setupUserInterface(ui)
 
         # Check if the targetPrim already has a variant of this type (usd_file)
-        exists, existing_vsets = self.find_authoring_variant_sets("usd_file")
+        exists, existing_vsets = self.find_authoring_variant_sets("material")
         remove_widget = ui.findChild(QPushButton, "vs_remove")
         if exists:
             self.creatingNewVariant = False
@@ -55,15 +55,8 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         else:
             remove_widget.hide() 
 
-        ui.final_button.setText("Create Variants")
+        ui.final_button.setText("Close")
         ui.final_button.clicked.connect(partial(self.close, ui))
-
-    def open_folder(self, ui, row_number):
-        print(f"Opening folder for row: {row_number}")
-        # Now you can find the specific LineEdit for this row:
-        line_edit = ui.findChild(QLineEdit, f"variant_input_{row_number}")
-        if line_edit:
-            print(f"Current text is: {line_edit.text()}")
 
     def add_variant_row(self, ui):
         # Create widgets
@@ -84,7 +77,7 @@ class MaterialVariantAuthor(VariantAuthoringTool):
 
         # Setting object names
         variant_name_line_edit.setObjectName(f"variant_input_{rowIndex}")
-        setButton.setObjectName(f"select_button_{rowIndex}")
+        setButton.setObjectName(f"set_button_{rowIndex}")
 
         # Add to the grid layout in new row
         ui.gridLayout.addWidget(label, rowIndex, 0)
@@ -92,6 +85,8 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         ui.gridLayout.addWidget(setButton, rowIndex, 2)   
 
         setButton.clicked.connect(lambda checked=False, r=rowIndex: self.setMaterialVariantSet(ui, r))
+
+    # VARIANT AUTHORING SPECIFIC FUNCTIONS -------------------------------------------------------
 
     # set XForm material variant for that row - linked to row number
     def setMaterialVariantSet(self, ui, row_number):
@@ -106,6 +101,14 @@ class MaterialVariantAuthor(VariantAuthoringTool):
         self.createAMaterialVariant(vset, v_name_input, material_path)
 
         self.reset_binding()
+        self.apply_pipeline_tag(variant_set_name)
+
+        # if successful, change pinned icon
+        set_button = ui.findChild(QPushButton, f"set_button_{row_number}")
+        set_button.setIcon(QIcon(str(self.pinned_icon)))
+
+        # set as read only
+        v_name_input_widget.setReadOnly(True)
 
     def get_material_path(self):
         binding_api = UsdShade.MaterialBindingAPI(self.targetPrim)
@@ -142,4 +145,24 @@ class MaterialVariantAuthor(VariantAuthoringTool):
                 rel.ClearTargets(True) 
             else:
                 print("Relationship exists but is already empty.")
+
+    def apply_pipeline_tag(self, variant_set_name):
+        vset = self.targetPrim.GetVariantSet(variant_set_name)
+        attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
+        variant_names = vset.GetVariantNames()
+
+        stage = self.targetPrim.GetStage()
+        target_layer = stage.GetRootLayer()
+
+        for var_name in variant_names:
+            vset.SetVariantSelection(var_name)
+
+            with vset.GetVariantEditContext(target_layer):
+                attr = self.targetPrim.GetAttribute("variant_set_pipeline_tag")
+
+                if (attr):
+                    attr.Set("material")
+                else:
+                    attr = self.targetPrim.CreateAttribute("variant_set_pipeline_tag", Sdf.ValueTypeNames.String)
+                    attr.Set("material")   
 
