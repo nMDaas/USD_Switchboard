@@ -39,13 +39,14 @@ cmds.shelfButton(
     label="Usd_File_Variant_Author",
     imageOverlayLabel="",
     image="UsdFileVariant_AIcon.png",
-    command='''
+    command=f'''
 import sys
-folder = '/Users/natashadaas/USD_Switchboard'
-if folder not in sys.path:
-    sys.path.append(folder)
+tool_root = r"{tool_root}"
+if tool_root not in sys.path:
+    sys.path.append(tool_root)
 
-exec(open(folder + "/src/UsdFileVariantAuthor_exec_tool.py").read())
+import src.UsdFileVariantAuthor_exec_tool as tool
+importlib.reload(tool)
 ''',
     annotation="Runs Usd_File_Variant_Author",
     sourceType="Python"
@@ -65,13 +66,14 @@ cmds.shelfButton(
     label="Transform_Variant_Author",
     imageOverlayLabel="",
     image="TransformVariant_AIcon.png",
-    command='''
+    command=f'''
 import sys
-folder = '/Users/natashadaas/USD_Switchboard'
-if folder not in sys.path:
-    sys.path.append(folder)
+tool_root = r"{tool_root}"
+if tool_root not in sys.path:
+    sys.path.append(tool_root)
 
-exec(open(folder + "/src/TransformVariantAuthor_exec_tool.py").read())
+import src.TransformVariantAuthor_exec_tool as tool
+importlib.reload(tool)
 ''',
     annotation="Runs Transform_Variant_Author",
     sourceType="Python"

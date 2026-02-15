@@ -3,11 +3,12 @@
 
 # Instructions: Make any changes to the path desired and run this file.
 
+import os
 import sys
 
 #SET THIS FOLDER to the parent folder that you've downloaded the repository to
 #or ensure that the parent folder is added to your PYTHONPATH
-folder = '/Users/natashadaas/USD_Switchboard'
+folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #check if folder is part of PYTHONPATH and if not, add it
 if folder not in sys.path:
