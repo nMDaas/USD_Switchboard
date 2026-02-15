@@ -46,7 +46,7 @@ if tool_root not in sys.path:
     sys.path.append(tool_root)
 
 import src.UsdFileVariantAuthor_exec_tool as tool
-importlib.reload(tool)
+tool.run()
 ''',
     annotation="Runs Usd_File_Variant_Author",
     sourceType="Python"
@@ -73,7 +73,7 @@ if tool_root not in sys.path:
     sys.path.append(tool_root)
 
 import src.TransformVariantAuthor_exec_tool as tool
-importlib.reload(tool)
+tool.run()
 ''',
     annotation="Runs Transform_Variant_Author",
     sourceType="Python"
