@@ -29,6 +29,8 @@ An open-source custom shelf to support variant authoring within Maya. Tools avai
 </tr>
 </table>
 
+Toolkit Demo: https://www.youtube.com/watch?v=TzI132NprEA
+
 ## Installation
 1. Download and unzip this repository in a location of your choosing
 2. With an opened Maya scene, open the Script Editor
